@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<user_info><user_id>5387c439aaa7e</user_id><tour_name>Whale Watch &amp; Snorkel Adventure (Pride of Maui)</tour_name><tour_date>2014-05-30</tour_date><totals_string><![CDATA[<div id=\"tourcms-totals\"><ul class=\"sb-booking-ul\"><li class=\"sb-booking-li\">1 adult at $37.95 = $37.95</li><li class=\"sb-booking-li\">2 children at $26.95 = $53.90</li></ul><p id=\"sb-total-price\">Subtotal: $61.85</p></div>]]></totals_string><booking>
+<booking><total_customers>3</total_customers><booking_key>0_0_1401406524_6834_a5d6384b79186ba4a9723dbaaa297a2f</booking_key><components><component><component_key>eiUFHs4TCc0u/6Idf8kMggjY8DncIgUdNPUIZ0XR3zLqMzXxLRYL0Hj5dKnh/yv49DCzC/eXi0rSciWbfx7FQw==</component_key><options/></component></components><customers><customer><title/><firstname/><surname/><email/><tel_home/><address/><city/><county/><postcode/><country/><agecat>a</agecat><tel_mobile/></customer><customer><title/><firstname/><surname/><email/><tel_home/><address/><city/><county/><postcode/><country/><agecat>a</agecat><tel_mobile/></customer><customer><firstname/><surname/><agecat>a</agecat></customer></customers></booking>
+</booking><result>
+<response>
+<request>POST /c/booking/new/start.xml</request>
+<error>OK</error>
+<booking>
+<booking_id>1289</booking_id>
+<channel_id>6875</channel_id>
+<account_id>6834</account_id>
+<booking_engine_url>https://live.tourcms.com/reserve/r4.php?a=6834&amp;h=39ac8b4c7934d388f530&amp;bid=1289&amp;w=6875</booking_engine_url>
+<available_component_count>2</available_component_count>
+<unavailable_component_count>0</unavailable_component_count>
+            	<sale_currency>USD</sale_currency>
+<sales_revenue>110.43</sales_revenue>
+<sales_revenue_display>US&amp;#36;110.43</sales_revenue_display>
+<sales_revenue_due_now>110.43</sales_revenue_due_now>
+<sales_revenue_due_now_display>US&amp;#36;110.43</sales_revenue_due_now_display>
+<sales_price_due_ever>110.43</sales_price_due_ever>
+<sales_price_due_ever_display>US&amp;#36;110.43</sales_price_due_ever_display><creditcard_fee_type>0</creditcard_fee_type>
+</booking>
+</response>
+</result></user_info>

@@ -1,0 +1,122 @@
+/*Switcher*/
+#tab-frame-1, #tab-frame-2 {
+	display: none;
+}
+
+#mobile-booking-elements {
+	display: none;
+}
+
+
+@media only screen and (max-width: 800px) {
+	.sb-confirm-field {
+		width: 50px!important;
+	}
+	
+	#sb-tour-activity-date-field {
+		width: 100px!important
+	}
+	
+	.availability-key {
+		margin: 0;
+		text-align: center;
+		padding: 0;
+	}
+	
+	.a-key-li {
+		padding: 0;
+		padding-right: 5px;
+		margin: 0;
+	}
+}
+
+@media only screen and (min-width: 481px) {
+	
+	.page-template-tour-php {
+		padding: 0;
+	}
+	#sb-tour-widget-wrap {
+		width: 100%;
+		padding: 0;
+		margin: 15px auto 0 auto;
+		max-width: 1024;
+		display: block;
+	}
+	
+	.sb-tour-h4 {
+		color: #46B3DD;
+		background: none;
+	}
+	
+	#sb-tour-form {
+		width: 35%;,
+		float: right;
+		display: inline-block;
+		vertical-align: top;
+		padding-left: 1%;
+		padding-right: 1%;
+		margin-top: 25px;
+		top: 0;
+		right: 0;		
+	}
+	
+	.sb-tour-description, .tourcms-sidebar-day, #sb-tour-month, .tourcms-sidebar-td, .sb-tour-upgrades-td, .date_any, .available, .unavailable, .sb-tour-tab {
+		font-size: 13px!important;
+		line-height: 22px;
+	}
+	.sb-tour-tabs {
+		height: 60px!important;
+		background: none!important;
+		border: none;
+		width: auto;
+		box-shadow: none;
+		z-index: 1;	
+		position: relative;
+	}
+	
+	.sb-tour-tab {
+		display: inline-block;
+		border: 1px solid #ededed;
+		padding-left: 20px;
+		padding-right: 20px;
+		border-radius: 10px;
+		padding-top: 7px;
+		font-size: 14px;
+		margin-top: 20px;
+	}
+	
+	#sb-tab-0 {
+		color: rgb(70, 179, 221);
+	}
+	
+	.sb-tour-tab-frame {
+		width: 100%;
+		border: 1px solid #ededed;
+		box-sizing: border-box;
+		background: #FFFFFF;
+		z-index: 10;
+		position: relative;
+	}
+	
+	.sb-tour-switcher {
+		position: relative;
+		background: none;
+		border: none;
+		box-shadow: none;
+		height: auto;
+	}
+	
+	.arrow-left {
+		display: none;
+	}
+	
+	#tablet-booking-elements {
+		vertical-align: top;
+		display: inline-block;
+		width: 58%;
+		position: relative;
+		padding: 2%;
+		box-sixing: border-box;
+	}
+
+}

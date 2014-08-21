@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<meta_box>
+	<params>
+		<id>tour_slug_meta_box</id>
+		<title>Post Slug</title>
+		<context>advanced</context>
+		<priority>high</priority>
+	</params>
+	<wp_postmeta>post_name</wp_postmeta>
+	<input>
+		<type>text</type>
+	</input>
+</meta_box>

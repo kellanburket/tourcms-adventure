@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<meta_box>
+	<params>
+		<id>tour_subtitle_meta_box</id>
+		<title>Subtitle</title>
+		<context>advanced</context>
+		<priority>high</priority>
+	</params>
+	<wp_postmeta>subtitle</wp_postmeta>
+	<input>
+		<type>text</type>
+	</input>
+</meta_box>

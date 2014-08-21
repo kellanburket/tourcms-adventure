@@ -1,0 +1,183 @@
+@media screen and (max-width: 768px) {
+	#tablet-booking-elements {
+		width: 45%;
+	}
+	
+	#sb-tour-form {
+		width: 45%
+	}	
+}
+
+@media screen and (max-width: 480px) {
+
+	#tablet-booking-elements {
+		display: none;
+	}
+
+	#sb-tour-form {
+		width: 100%;
+	}
+	
+	#sb-tour-switcher {
+		display: none;
+	}
+/*Switchbox*/
+	#tab-frame-0 {
+		display: block;
+	}
+	#tab-frame-1, #tab-frame-2 {
+		display: none;
+	}
+	
+	
+	.sb-tour-switcher {
+		width: 100%;
+		position: relative;
+		height: auto;
+	}
+	
+	.sb-tour-tabs {
+		display: inline-block!important;
+		width: 100px;
+		vertical-align: top;
+		position: relative;
+		z-index: 10;
+		height: auto;
+	}
+	
+	.sb-tour-tab-frame {
+		z-index: 1;
+		margin-top: 3px;
+		overflow: hidden;
+		box-sizing: border-box;
+		height: auto;
+		border-radius: 5px;
+		width: -moz-calc(100% - 105px);
+		width: -webkit-calc(100% - 105px);
+		width: -o-calc(100% - 105px);
+		width: calc(100% - 105px);
+	}
+	
+	.sb-tour-tab-info, .sb-tour-description {
+		text-align:left;
+		font-size: 1.0em!important;
+		line-height: 22px;
+	}
+	
+	.sb-tour-tab-footnote {
+		text-align:left;
+		font-size: 9px!important;
+		line-height: 16px;
+	}
+	
+	.arrow-left {
+		top: 13px;
+		left: 89px;	
+		z-index: 15;
+	}
+	
+	
+	/* Sidebar */
+
+	#sb-tour-widget-wrap {
+		margin: 0!important;
+		padding: 10px!important;
+		width: 100%;
+		min-width: 300px;
+	}
+	
+	#mobile-booking-elements {
+		display: block;
+	}
+	
+	article { 
+		width: 100%;
+	}
+	
+	.sb-tour-thumbnail {
+		margin: 0 auto;
+		display: block;
+		position: relative;
+	}
+	
+	.page-template-content-tour-php {
+		padding: 0!important;
+		min-width: 300px;
+	}
+	
+	h1 {
+		display: none;
+	}
+	
+	.entry-content {
+		display: none;
+	}
+
+	
+	.availability-key {
+		margin: 10px 0;
+	}
+	
+	.tour-archive-wrapper {
+		width: 95%;
+		margin-bottom: 25px;
+		display: block;
+		margin: 25px auto;
+		position: relative;
+	}
+	
+	.tour-archive-thumbnail {
+		width: 40%;
+	}
+	.tour-archive-description {
+		width: 55%;
+	}
+
+	.tour-archive-h1 {
+		width: 95%;
+		margin: 10px auto;
+	}
+	
+	.tour-archive-h3 {
+		width: 95%;
+		margin: 20px auto;		
+		font-size: 18px;
+	}
+
+	.tour-archive-wrapper {
+		width: 95%;
+		margin-bottom: 25px;
+		display: block;
+		margin: 25px auto;
+		position: relative;
+	}
+	
+	.tour-archive-thumbnail {
+		width: 95%;
+		margin: 0 auto;
+		display: block;
+		
+	}
+	.tour-archive-image {
+		width: 100%;
+		float: none;
+		margin: 0 auto;
+		display: block;
+	}	
+	.tour-archive-description {
+		width: 95%;
+		margin: 0 auto;
+		display: block;
+		padding: 0;
+	}
+	.tour-archive-book-now {
+		float: none;
+		width: 95%;
+		display: block;
+		
+	}
+
+	/* Checkout */	
+	#checkout-div-4 > .checkout-h3-wrap {
+		height: 60px;
+	}

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<page>
+	<labels>
+		<name>Tours(Mobile)</name>
+		<singular_name>Tour(Mobile)</singular_name>		
+	</labels>	
+	<public>true</public>
+	<publicly_queryable>true</publicly_queryable>
+	<show_ui>true</show_ui>
+	<show_in_menu>edit.php?post_type=tourcms</show_in_menu>
+	<query_var>true</query_var>
+	<rewrite>
+		<slug>tourcms_mobile</slug>
+	</rewrite>
+	<capability_type>post</capability_type>
+	<has_archive>true</has_archive>
+	<hierarchical>false</hierarchical>
+	<menu_position>6</menu_position>
+	<supports type="array">
+		<support>editor</support>
+		<support>thumbnail</support>
+		<support>title</support>
+	</supports>
+</page>

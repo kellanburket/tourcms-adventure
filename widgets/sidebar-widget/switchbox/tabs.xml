@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<switchbox>
+	<specs>
+		<switchbox_class>sb-tour-switcher</switchbox_class>
+		<tabs_class>sb-tour-tabs</tabs_class>
+		<tab_class>sb-tour-tab tcms-font-basal</tab_class>
+		<tab_id>sb-tab</tab_id>
+		<frame_class>sb-tour-tab-frame</frame_class>
+		<panel_class>sb-tour-tab-info-wrap tcms-font-basal</panel_class>
+		<panel_id>tab-frame</panel_id>
+		<field_class>sb_tour_tab_info</field_class>
+		<head_class></head_class>
+	</specs>
+	<tabs type="array">
+		<tab>
+			<name>Details</name>
+			<contents type="array">
+				<content>
+					<field_head>Where to Board</field_head>
+					<field_handle>address</field_handle>
+				</content>
+				<content>
+					<field_head>Itinerary</field_head>
+					<field_handle>itinerary</field_handle>
+				</content>
+				<content>
+					<field_head>Trip</field_head>
+					<field_handle>
+						<first>start_time</first>
+						<second>end_time</second>
+						<format>range</format>
+					</field_handle>
+				</content>
+				<content>
+					<field_head>Restrictions</field_head>
+					<field_handle>
+						<handle>rest</handle>
+						<class>sb-tour-tab-footnote</class>
+					</field_handle>
+				</content>
+			</contents>
+		</tab>
+		<tab>
+			<name>Included</name>
+			<contents type="array">
+				<content>
+					<field_handle>inc</field_handle>
+				</content>
+				<content>
+					<field_head>Extras</field_head>
+					<field_handle>extras</field_handle>
+				</content>
+			</contents>
+		</tab>
+		<tab>
+			<name>What to Bring</name>
+			<contents type="array">
+				<content>
+					<field_head>Items to Bring</field_head>
+					<field_handle>essential</field_handle>
+				</content>
+			</contents>
+		</tab>
+	</tabs>
+</switchbox>

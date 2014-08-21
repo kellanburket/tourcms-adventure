@@ -1,0 +1,315 @@
+<?xml version="1.0"?>
+<menu>
+	<function>
+		<name>add_options_page</name>
+		<params>
+			<page_title>Configure TourCMS Settings</page_title>
+			<menu_title>TourCMS Settings</menu_title>
+			<capability>administrator</capability>		
+			<menu_slug>tourcms_settings_menu</menu_slug>
+		</params>
+	</function>
+	<priority>8</priority>
+	<form>
+		<form_action>options.php</form_action>
+		<field_class>generic_custom_form</field_class>
+	</form>
+	<tabs type="array">
+		<tab>
+			<title>General</title>
+			<settings_group>general</settings_group>
+			<sections type="array">
+				<section>
+					<id>checkout_page_config</id>
+					<title>General Configuration Options</title>
+					<fields type="array">
+						<field>
+							<tag>input</tag>
+							<label>TourCMS API Key</label>
+							<attributes>
+								<type>text</type>
+								<name>tourcms_api_key</name>
+							</attributes>
+						</field>					
+						<field>
+							<tag>input</tag>
+							<label>TourCMS Channel ID</label>
+							<attributes>
+								<type>text</type>
+								<name>tourcms_channel_id</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>input</tag>
+							<label>Sales Tax</label>
+							<attributes>
+								<type>text</type>
+								<name>tourcms_sales_tax</name>
+							</attributes>
+						</field>							
+						<field>
+							<tag>select</tag>
+							<validation_callback>intval</validation_callback>
+							<label>Select a Checkout Page</label>
+							<attributes>
+								<name>tourcms_checkout_page</name>	
+							</attributes>
+							<options>
+								<function>get_posts</function>	
+								<params type="array">
+									<param>
+										<post_type>tourcms_checkout</post_type>
+									</param>
+								</params>
+								<return>
+									<type>object</type>
+									<key>ID</key>
+									<value>post_name</value>
+								</return>
+							</options>
+						</field>					
+						<field>
+							<tag>input</tag>
+							<label>Run TourCMS in Debug Mode?</label>
+							<validation_callback type="array">
+								<callback>validate_checkbox</callback>
+							</validation_callback>
+							<attributes>
+								<type>checkbox</type>
+								<name>tourcms_debug_mode</name>
+							</attributes>
+						</field>					
+					</fields>
+				</section>
+			</sections>
+		</tab>		
+		<tab>
+			<title>Authorize.Net</title>
+			<settings_group>authorize_net</settings_group>
+			<sections type="array">
+				<section>
+					<id>authorize_net_config</id>
+					<title>Authorize.Net Configuration</title>
+					<fields type="array">
+						<field>
+							<tag>input</tag>
+							<label>API KEY</label>
+							<attributes>
+								<type>text</type>
+								<name>authorize_net_api_login</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>input</tag>
+							<label>Transaction Key</label>
+							<attributes>
+								<type>text</type>
+								<name>authorize_net_transaction_key</name>
+							</attributes>				
+						</field>
+						<field>
+							<tag>input</tag>
+							<label>MD5 Setting</label>
+							<attributes>
+								<type>text</type>
+								<name>authorize_net_md5_setting</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>input</tag>
+							<label>Authorize.Net URL</label>
+							<validation_callback>esc_url</validation_callback>
+							<attributes>
+								<type>text</type>
+								<name>authorize_net_url</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>input</tag>
+							<label>Test API Key</label>
+							<attributes>
+								<type>text</type>
+								<name>authorize_net_api_login_test</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>input</tag>
+							<label>Test Transaction Key</label>
+							<attributes>
+								<type>text</type>
+								<name>authorize_net_transaction_key_test</name>
+							</attributes>
+						</field>			
+						<field>
+							<tag>input</tag>
+							<label>Test MD5 Setting</label>
+							<attributes>
+								<type>text</type>
+								<name>authorize_net_md5_setting_test</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>input</tag>
+							<label>Test Authorize.Net URL</label>
+							<validation_callback>esc_url</validation_callback>
+							<attributes>
+								<type>text</type>
+								<name>authorize_net_url_test</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>input</tag>
+							<label>Use Authorize.Net in Test Mode?</label>
+							<validation_callback type="array">
+								<callback>validate_checkbox</callback>
+							</validation_callback>
+							<attributes>
+								<type>checkbox</type>
+								<name>authorize_net_in_test_mode</name>
+							</attributes>
+						</field>
+					</fields>
+				</section>
+			</sections>
+		</tab>
+		<tab>
+			<title>Error Messages</title>
+			<settings_group>error_messages</settings_group>
+			<sections type="array">
+				<section>
+					<id>tourcms_error_messages</id>
+					<title>Error Messages</title>
+					<fields type="array">
+						<field>
+							<tag>textarea</tag>
+							<label>Invalid Date/No Date</label>
+							<attributes>
+								<name>invalid_date</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>Missing Customers</label>
+							<attributes>
+								<name>missing_customers_error</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>No Availabilities</label>
+							<attributes>
+								<name>no_availabilities</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>Invalid Tour</label>
+							<attributes>
+								<name>invalid_tour</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>TourCMS Technical Problem</label>
+							<attributes>
+								<name>tourcms_technical_problem</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>Invalid Promo Code</label>
+							<attributes>
+								<name>invalid_promo</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>Invalid Title</label>
+							<attributes>
+								<name>invalid_title</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>Invalid Email</label>
+							<attributes>
+								<name>invalid_email</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>Availability Access Error</label>
+							<attributes>
+								<name>tourcms_access_error</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>Authorize.Net Failed Payment</label>
+							<attributes>
+								<name>authorize_net_failed_payment</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>Authorize.Net Transaction Error</label>
+							<attributes>
+								<name>authorize_net_transaction_error</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>TourCMS Payment Error</label>
+							<attributes>
+								<name>tourcms_payment_error</name>
+							</attributes>
+						</field>
+						<field>
+							<tag>textarea</tag>
+							<label>Server Error</label>
+							<attributes>
+								<name>server_error</name>
+							</attributes>
+						</field>
+					</fields>
+				</section>				
+			</sections>			
+		</tab>
+		<tab>
+			<title>Order Receipt</title>
+			<note>Shortcodes: [customer_count], [tour_name], [start_date], [customer_name]</note>
+			<settings_group>receipt</settings_group>
+			<sections type="array">
+				<section>
+					<id>receipt_config</id>
+					<title>Recipt Options</title>
+					<fields type="array">
+						<field>
+							<tag>input</tag>
+							<label>Header Text</label>
+							<attributes>
+								<type>text</type>
+								<name>tourcms_receipt_page_head</name>
+							</attributes>
+						</field>					
+						<field>
+							<tag>textarea</tag>
+							<label>Text</label>
+							<attributes>
+								<name>tourcms_receipt_page_text</name>
+							</attributes>
+						</field>					
+						<field>
+							<tag>textarea</tag>
+							<label>Note</label>
+							<attributes>
+								<name>tourcms_receipt_page_note</name>
+							</attributes>
+						</field>					
+					</fields>
+				</section>
+			</sections>
+		</tab>		
+	</tabs>
+	<submit_value>Submit</submit_value>
+</menu>

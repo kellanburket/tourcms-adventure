@@ -1,0 +1,386 @@
+.black-border-top {
+	border-top: 1px solid black;
+	padding-top: 5px;
+	margin-top: 5px;
+}
+
+/* checkout page */
+
+.sb-total-ul, .sb-booking-ul, .sb-booking-li {
+	list-style: none;
+}
+
+.sb-total-li {
+	overflow: hidden;
+}
+
+#sb-total-price {
+	text-align: right;
+}
+
+
+#total-cost-total {
+	text-align: right;
+	font-family: "Open Sans";
+	font-weight: 600;
+	font-size: 1.8em;
+	text-rendering: auto;
+}
+
+.total-cost-label {
+	font-size: 14px;
+}
+
+.float-right {
+	float: right;
+}
+
+.float-left {
+	float: left;
+}
+
+
+#checkout-date-2, #checkout-activity-2 {
+	display: none;
+}
+
+.checkout-title {
+	margin-top: 100px;
+}
+
+#submit-div {
+	padding: 20px;
+	display: block;
+	width: 100%;
+	height: auto;
+	position: relative;
+	box-sizing:border-box;
+}
+
+#confirm-booking {
+	float: right;
+	position: relative;
+	padding: 5px;
+}
+
+#checkout-wrap {
+	width: 70%;
+	margin: 0 auto;
+	display: block;
+	box-sizing: border-box;
+}
+
+#checkout-sidebar {
+	display: inline-block;
+	vertical-align: top;
+	width: 32%;
+	box-sizing: border-box;
+	margin-left: 5px;
+}
+
+.checkout-sidebar-div {
+	height: auto;
+	min-height: 320px;
+}
+
+#checkout-main {
+	display: inline-block;
+	width: 65%;
+}
+
+.checkout-h3-wrap {
+	width: 105%;
+	margin-left: -2.5%;
+	margin-top: -2.5%;
+	margin-bottom: 10px;
+	background-color: #0CF;
+	height: 50px;
+	padding: 2%;
+	box-sizing: border-box;
+}
+
+.checkout-h3-wrap h3 {
+	color:#fff;
+}
+
+.checkout-div {
+	border: 1px solid #dddddd;
+	padding: 2.5%;
+	background-color: #fcfcfc;
+	display: inline-block;
+	box-sizing: border-box;
+	float: right;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+#checkout-wrap-2 {
+	width: 70%;
+	margin: 0 auto;
+	display: block;
+	box-sizing: border-box;
+	float: none;
+}
+
+.checkout-select {
+	width: 100px;
+}
+
+#checkout-table {
+	width: 100%;
+	border-spacing: 5px;
+}
+
+#checkout-thead {
+	border-bottom: 1px solid gray;	
+	width: 100%;
+	display: table-header-group;
+}
+
+.checkout-th, .checkout-td {
+	text-align: center;
+	vertical-align: top;
+	font-size: 14px;
+}
+
+.checkout-label {
+	display: inline-block;
+	width: 30%;
+}
+
+#credit-cards {}
+
+.checkout-field, .checkout-select {
+	width: 69%!important;
+	display: inline-block!important;
+	height: 30px!important;
+    clear: both!important;
+    display: inline-block!important;
+    vertical-align: baseline!important;
+    margin: 5px 0!important;
+	padding: 2px!important;
+}
+
+#checkout-tbody {
+	border-bottom: 1px solid gray;	
+	width: 100%;
+	display: table-row-group;
+}
+
+#checkout-activity {
+	font-weight: 800;
+}
+
+.checkout-row-1 {
+	width: 45%;
+	text-align: left;
+}
+.checkout-row-2 {
+	width: 10%;
+	text-align: right;
+}
+
+.checkout-row-3 {
+	width: 40%;
+	text-align: right;
+}
+
+
+#checkout-total {
+	border-bottom: 1px solid gray;
+	border-top: 1px solid gray;
+}
+
+#checkout-continue {
+	float: right;
+}
+
+.checkout-tr {	
+	width: 100%;
+}
+
+.checkout-td {	
+	padding: 10px 0;
+}
+
+.checkout-field {
+	height: 15px;
+	padding: 1px;
+}
+
+#checkout-sidebar-top {
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	padding: 20px 0px;
+}
+
+
+#checkout-sidebar-bottom {
+	padding: 20px 0px;
+}
+
+.checkout-exp-block {
+	width: 100%;
+	display: block;
+	margin-bottom: 10px;
+}
+
+.checkout-label-exp, .checkout-field-exp, .checkout-select-exp {
+	display: inline-block!important;
+	clear: none!important;
+	width: 32%!important;
+}
+
+.inner {
+	display: none;
+}
+
+.submit-div {
+	float: right;
+	position: relative;
+}
+
+#checkout-continue {
+	height: 50px;
+	width: 150px;
+}
+
+#checkout-continue-text {
+	margin-top: 10px;
+	text-align: center;
+}
+
+#sb-tour-spinning-loader {
+	left: 65px!important;
+	top: 12px!important;
+}
+
+
+
+
+@media only screen and (max-width: 1000px) {
+	/*Checkout*/
+
+	html {
+		margin: 0!important;
+	}
+	
+	.mainmenu.row {
+		display: none!important;
+	}
+		
+	body {
+		padding: 0!important;
+		margin: 0!important;
+	}
+
+	.page-template-checkout-php {
+		padding: 0;
+	}
+	
+	#checkout-wrap {
+		margin-top: 30px!important;
+	}
+	
+	#checkout-date-2, #checkout-activity-2 {
+		display: block;
+		font-family: "Open Sans", "Helvetica", sans-serif;
+		font-size: 14px;
+		margin: 0;
+		font-weight: 800;
+	}
+
+	
+	.checkout-select, .checkout-field, .checkout-label {
+		width: 100%!important;
+	}
+	
+	#booking-confirmed {
+		width: 90%;
+		min-width: 300px;
+		border: 1px solid gray;
+		display: block;
+		margin: 75px auto;
+		padding: 10px;
+		text-align: center;
+	}
+	#checkout-sidebar {
+		display: none;
+	}
+	#checkout-wrap {
+		width: 100%;
+		min-width: 300px;
+		margin: 0 auto;
+		display: block;
+		box-sizing: border-box;
+	}
+	#checkout-main {
+		width: 100%;
+		margin: 0;
+	}
+	#checkout-wrap-2 {
+		width: 100%;
+		min-width: 300px;
+		margin: 0 auto;
+	}
+	
+	.checkout-exp-block {
+		width: 100%;
+		display: block;
+		margin-bottom: 10px;
+	}
+
+	.checkout-label-exp, .checkout-field-exp, .checkout-select-exp {
+		display: inline-block!important;
+		clear: none!important;
+		width: 32%!important;
+	}
+	
+	#checkout-thead {
+		display: none;
+	}
+
+	.checkout-tbody-td, .checkout-thead-td {
+		display: block!important;
+		width: 100%!important;
+	}
+
+	.checkout-tbody-tr {
+		margin-bottom: 10px;		
+		border-bottom: none;
+	}
+	
+	#checkout-continue {
+		margin: 10px 0;
+	}
+	
+	.blank-td {
+		display: none;
+		padding: 0;
+		margin: 0;
+	}
+	
+	.checkout-row-1, .checkout-row-2 {
+		display: none!important;
+	}
+	.checkout-row-3 {
+		float: left;
+		width: 100%!important;
+		display: table-row!important;
+	}
+}
+
+@media only screen and (max-width: 400px) {
+	
+	h3 {
+		font-size: 20px!important;
+		padding-top: 10px!important;
+	}
+	h1, h3 {
+		text-align: center;
+	}	
+	
+	#checkout-wrap {
+		width: 100%!important;	
+	}
+}

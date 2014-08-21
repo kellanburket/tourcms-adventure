@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<meta_box>
+	<params>
+		<id>tour_id_meta_box</id>
+		<title>Select Tour</title>
+		<callback>get_tour_id_meta_box</callback>
+		<context>side</context>
+		<priority>high</priority>
+	</params>
+</meta_box>
+
+
+
+

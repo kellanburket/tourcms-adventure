@@ -1,0 +1,20 @@
+/* Admin */
+#tourcms-options > label {
+	display: block;
+}
+
+#tourcms-options > textarea {
+	width: 75%;
+	height: 50px;	
+}
+
+.postbox > .inside > input {
+	width: 100%;
+}
+
+.tourcms-widget-table > tbody > tr > td {
+}
+
+.generic_custom_form {
+	width: 500px;
+}

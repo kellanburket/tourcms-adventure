@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<user_info><user_id>5387c52e9ea0f</user_id><tour_name>Whale Watch &amp; Snorkel Adventure (Pride of Maui)</tour_name><tour_date>2014-05-30</tour_date><totals_string><![CDATA[<div id=\"tourcms-totals\"><ul class=\"sb-booking-ul\"><li class=\"sb-booking-li\">1 adult at $37.95 = $37.95</li></ul><p id=\"sb-total-price\">Subtotal: $27.95</p></div>]]></totals_string><booking>
+<booking><total_customers>1</total_customers><booking_key>0_0_1401406769_6834_a8b49400dd0c752bd25e660b91fca25a</booking_key><components><component><component_key>om/ucC0b/yqXbAJmzKWU6IXN87kBN9iRWoC8dguyNpHf3463GgluvE/muSFpde1JkvEqz+3fQ+O+oHhLdKdTEQ==</component_key><options/></component></components><customers><customer><title/><firstname/><surname/><email/><tel_home/><address/><city/><county/><postcode/><country/><agecat>a</agecat><tel_mobile/></customer></customers></booking>
+</booking><result>
+<response>
+<request>POST /c/booking/new/start.xml</request>
+<error>OK</error>
+<booking>
+<booking_id>1291</booking_id>
+<channel_id>6875</channel_id>
+<account_id>6834</account_id>
+<booking_engine_url>https://live.tourcms.com/reserve/r4.php?a=6834&amp;h=3919de1bd078bfeaa0eb&amp;bid=1291&amp;w=6875</booking_engine_url>
+<available_component_count>1</available_component_count>
+<unavailable_component_count>0</unavailable_component_count>
+            	<sale_currency>USD</sale_currency>
+<sales_revenue>44.67</sales_revenue>
+<sales_revenue_display>US&amp;#36;44.67</sales_revenue_display>
+<sales_revenue_due_now>44.67</sales_revenue_due_now>
+<sales_revenue_due_now_display>US&amp;#36;44.67</sales_revenue_due_now_display>
+<sales_price_due_ever>44.67</sales_price_due_ever>
+<sales_price_due_ever_display>US&amp;#36;44.67</sales_price_due_ever_display><creditcard_fee_type>0</creditcard_fee_type>
+</booking>
+</response>
+</result></user_info>

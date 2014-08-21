@@ -1,0 +1,925 @@
+/* General */
+
+button:disabled {
+	background: #AAAA9A!important;
+	border: #AAAA9A!important;
+	cursor: default;
+}
+
+#sb-tour-form {
+	box-sizing: border-box;
+}
+
+.tour-archive-wrapper {
+	width: 75%;
+	margin-bottom: 25px;
+	display: block;
+	margin: 25px auto;
+	position: relative;
+	max-width: 900px;
+}
+
+.tour-archive-book-now {
+	float: right;
+}
+
+.tour-archive-h1 {
+	margin-top: 50px;
+	text-align: center;
+}
+
+.tour-archive-thumbnail {
+	vertical-align: top;
+	display: inline-block;
+	width: 49%;
+	position: relative;	
+	left: 0;
+}
+
+.tour-archive-image {
+	float: left;
+	padding-right: 15px;
+}
+
+.tour-archive-description {
+	padding-left: 10px;
+	vertical-align: top;
+	display: inline-block;
+	width: 49%;
+	position: relative;	
+	box-sizing: border-box;
+}
+
+/* completed transaction page */
+#booking-confirmed {
+	width: 50%;
+	border: 1px solid gray;
+	display: block;
+	margin: 75px auto;
+	padding: 10px;
+	text-align: center;
+}
+
+/* sidebar css */
+
+#sb-tour-savings-box {
+	background: #f6c312;
+	background: radial-gradient(#f6c312, #f1b90c);
+	border-radius: 3px;
+	border: 1px solid #fccf34;
+	box-shadow: 0px 0px 1px 1px #d4ac16;
+	display: none;
+	margin-top: 15px;
+}
+
+#sb-tour-you-saved-text {
+	color: white;
+	font-family: "Open Sans", sans-serif;
+	font-size: 1.1em;
+	line-height: 1.8em;
+	padding: 15px 10px 10px 10px;
+	text-align: left;
+}
+
+#sb-tour-widget-wrap {
+	border: 1px solid #dddddd;
+	padding: 20px;
+	background: radial-gradient(ellipse at center, #feffff 67%, #e3eef2 100%);
+	width: 360px;
+	display: inline-block;
+	box-sizing: border-box;
+	margin: 0px 0px 50px 25px;
+}
+
+.sb-tour-h4 {
+	background: #46B3DD; 
+	color: #fff; 
+	padding: 10px;
+	font-family: "Open Sans", sans-serif;
+	font-size: 2em;
+	text-align: center;
+}
+
+.sb-tour-button {
+	color: black;
+}
+
+.sb-tour-description {
+	font-family: "Open Sans", sans-serif;
+	font-size: 1.2em;
+	line-height: 1.4em;
+}
+
+.sb-tour-thumbnail {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+/* sidebar switcher css */
+
+.sb-tour-switcher {
+	margin: 20px 2px;
+	border-radius: 5px;
+	box-shadow: 0 0 6px #c3c3c3;
+	box-sizing: border-box;
+	min-height: 240px;
+	background: #e3e3e3;
+	position: relative;
+	width: 100%;
+	height: auto;
+}
+
+.sb-tour-tabs {
+	list-style: none;
+	background: #e3e3e3; 
+	padding: 0;
+	margin: 0;
+	cursor: pointer;
+	height: auto;
+	width: 80px;
+	display: inline-block!important;
+	vertical-align: top;
+	position: relative;
+	z-index: 10;
+}
+
+.sb-tour-tab {
+	font-weight: 800;
+	border-bottom: 1px solid #ededed;
+	padding: 20px 5px 20px 10px;
+	color: #777;
+	font-family: "Open Sans", sans-serif;	
+	font-size: 12px;
+	margin: 0;
+}
+
+.sb-tour-tab-frame {
+	display: inline-block;
+	font-family: "Open Sans", sans-serif;
+	border-left: 1px solid #ededed;
+	border-radius: 5px;
+	padding: 4%;
+	height: auto;
+	min-height: 240px;
+	background: #ffffff;
+	width: -moz-calc(100% - 85px);
+	width: -webkit-calc(100% - 85px);
+	width: -o-calc(100% - 85px);
+	width: calc(100% - 85px);
+	z-index: 1;
+	margin-top: 3px;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+#tab-frame-7 {
+	display: block;
+}
+
+#tab-frame-8, #tab-frame-9 {
+	display: none;
+}
+
+.arrow-left {
+	width: 0; 
+	height: 0; 
+	border-top: 15px solid transparent;
+	border-bottom: 15px solid transparent; 	
+	border-right:15px solid white; 
+	position: absolute;
+	top: 1em;
+	left: 5.3em;
+	z-index: 15;
+}
+
+.sb-tour-tab-info, .sb-tour-description {
+	text-align:left;
+	font-size: 12px!important;
+	line-height: 22px;
+}
+
+.sb-tour-tab-info-wrap {
+	font-size: 12px!important;	
+}
+
+.sb-tour-tab-footnote {
+	text-align:left;
+	font-size: 9px!important;
+	line-height: 16px;
+}
+
+.sb-tour-h6 {
+	background: none;
+	color: black;
+	text-align: center;
+	font-weight: bold;
+	font-size: 12px;
+	text-transform: uppercase;
+}
+
+ /* sidebar dividers/wrappers */
+
+.mini-divider {
+    height: 1px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 10px 0px 10x 15px;
+    background-color: #ededed;
+}
+
+.sb-tour-ul-wrap {
+	background: #e3e3e3;
+	height: 100%;
+	display: inline-block;
+	box-sizing: border-box;
+	width: 30%;
+	vertical-align: top;
+	min-height: 240px;
+}
+
+/* calendar */
+
+#sb-tour-back-one {
+    font-size: 1.4em;
+    padding: 0 10px;
+    margin: 0;
+    border: none;
+    background: none;
+    float: left;
+}
+
+#sb-tour-forward-one {
+    font-size: 1.4em;
+    padding: 0 10px;
+    border: none;
+    background: none;
+    float: right;
+}
+
+.sb-tour-h5 {
+	background: #46B3DD;
+	color: white;
+	text-transform: uppercase;
+	font-family: "Open Sans", sans-serif;
+	text-align: center;
+	padding: 10px;
+	font-size: 1.3em;
+}
+
+#sb-tour-month {
+    font-family: "Open Sans";
+    font-size: 1.4em;
+	text-rendering: auto;
+}
+
+.sb-divider {
+	font-size: 16px;
+    font-weight: 400;
+    background-color: #ededed;
+    padding-right: 10px;
+    display: inline-block;
+    width: 100%;
+    padding: 0 3px;
+	height: 1px;
+    vertical-align: middle;
+    margin: 20px 0;
+}
+
+#sb-tour-pick-a-date-wrapper {
+	position: relative;
+	
+}
+
+#sb-tour-calendar {
+	margin: 0 auto;
+	text-align: center;
+	position: relative;
+	display: block;
+}
+
+#tourcms-sidebar-table {
+	text-align: center;
+	position: relative;
+	margin: 0 auto;
+	display: block;
+	border-spacing: 2px;
+	border-collapse: separate;
+}
+
+#tourcms-sidebar-table > tbody > tr {
+	width: 100%;
+}
+
+td.tourcms-sidebar-td, td.tourcms-sidebar-day {
+	text-align: center;
+	font-size: 12px;
+	width: 41px;
+	height: 50px;
+}
+
+
+.availability-key {
+    text-align: right;
+}
+
+.a-key-li {
+	display: inline-block;
+    margin-left: 5%;
+    vertical-align: baseline;
+    font-family: "Open Sans";
+	text-rendering: auto;
+}
+
+#selected-key {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: baseline;
+    margin-left: 5px;
+    background-color:#1D9FE6;
+}
+
+#available-key{
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: baseline;
+    margin-left: 5px;
+    background-color:white;
+    border: 1px solid gray;
+}
+
+#unavailable-key{
+   display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: baseline;
+    margin-left: 5px;
+    background-color:gray;
+    opacity: .4;
+}
+
+/* Generic */
+
+.sb-confirm-field {
+    border: 1px solid #cccccc;
+    box-shadow: 0 0 1px #cccccc;
+    display: inline-block;
+    font-family: "Open Sans";
+    width: 120px!important;
+	height: 20px!important;
+	float: right!important;
+    clear: both!important;
+    display: inline-block!important;
+    vertical-align: baseline!important;
+    margin: 5px 0!important;
+	padding: 0!important;    
+    padding-left: 10px;
+}
+
+
+
+/* Rates section */
+
+.sb-tour-rates {
+	height: 37px;	
+}
+
+.sb-tour-guests-label {
+    display: inline-block;
+    font-family: "Open Sans";
+    margin: 5px 0px;
+	text-rendering: auto;
+}
+
+/* Dates */
+
+#sb-tour-activity-date-field {
+	height: 20px!important;
+	width: auto;
+    float: right!important;
+    clear: both!important;
+    display: inline-block!important;
+    vertical-align: baseline!important;
+    margin: 5px 0!important;
+	padding: 0!important;
+}
+
+#activity-date-lb {
+    display: inline-block;
+    vertical-align: top;
+}
+.sb-tour-p {
+    font-family: "Open Sans";
+	text-rendering: auto;
+}
+
+
+/* Submission */
+
+#sb-submit {
+	float: right;
+	padding: 15px;
+	font-family: "Open Sans";
+	text-rendering: auto;
+	position: relative;
+	width: 111px;
+	height: 52px;
+	margin-bottom: 15px;
+}
+
+#sb-tour-spinning-loader {
+	position: absolute;
+	background: url('../img/spinning-loader.gif');
+	display: none;
+	width: 25px;
+	height: 25px;
+	top: 12px;
+	left: 45px;
+}
+
+.sb-booking-li {
+    font-family: "Open Sans";
+	text-rendering: auto;
+	font-size: 14px;
+}
+
+.sb-booking-ul {
+    list-style: none;
+    text-align: right;
+	text-rendering: auto;
+}
+
+#sb-total-price {
+    text-align: right;
+    font-family: "Open Sans";
+    font-weight: 600;
+    font-size: 1.8em;
+	text-rendering: auto;
+}
+
+/* Refund Box */
+
+#sb-tour-refund {
+    font-family: "Open Sans";
+    margin: 12px 0;
+	text-rendering: auto;
+}
+
+#sb-tour-refund > span {
+	font-family: "Open Sans";
+	text-rendering: auto;
+}
+
+/* Available Upgrades */
+
+.sb-tour-price-td {
+	text-align: center;
+}
+
+#sb-available-upgrades {
+    font-family: "Open Sans";
+	text-rendering: auto;
+    width: 100%;
+}
+
+.sb-tour-upgrades-td {
+    width: 33%;
+    padding-top: 6px;
+	text-rendering: auto;
+	font-family: "Open Sans", sans-serif;
+	margin-right: 10px;
+}
+
+/* Promo Code */
+
+#sb-promo-label {
+    display: inline-block;
+    margin: 5px 0;
+	text-rendering: auto;
+	font-family: "Open Sans", sans-serif;
+}
+
+
+/* footer css */
+
+#adventure-widget-wrap {
+	display: inline-block;
+	margin-left: 30px;
+}
+
+#adventure-widget-wrap > .footertitle {
+	float: none;
+	display: block;
+}
+
+#adventure-widget-wrap > .footertitle > h4 {
+	float: none;
+	display: block;
+}
+
+.choose-your-adventure-widget {
+	display: block;
+	height: 570px;
+	width: 270px;	
+	box-sizing: border-box;
+	background-color: #1D9FE6;
+	padding: 7px 10px;
+	border: 2px solid #FAFEFF;
+	box-shadow: 2px 2px 10px 1px #001F55;
+	-webkit-box-shadow: 2px 2px 10px 1px #001F55;
+	-moz-box-shadow: 2px 2px 10px 1px #001F55;
+}
+
+.adventure-h4 {
+	font-family: "Coustard", serif;
+	color: white!important;
+	text-transform: capitalize;
+	text-shadow: 2px 2px black;
+	text-align: center;
+	font-size: 20px;
+	font-weight: 900;
+	padding-top: 15px
+}
+
+.adventure-h5 {
+	font-family: "Coustard", serif;
+	color: white!important;
+	text-transform: capitalize;
+	text-align: center;
+	font-size: 1.4em;
+	line-height: 1.5em;
+	font-weight: 400;
+	letter-spacing: .1em;
+	text-shadow: 0px 0px 1px #B2DAFF;
+}
+
+#datepicker {
+	background-color: white;
+	box-sizing: border-box;
+	box-shadow: 1px 1px 3px;
+	-webkit-box-shadow:	1px 1px 3px;
+	-moz-box-shadow: 1px 1px 3px;
+	border: 1px solid #ddd;
+	padding: 10px;
+}
+
+.datepicker-h6 {
+	vertical-align: baseline;
+	color: #169fd8;
+	font-family: 'Oxygen';
+	text-transform: capitalize;
+	margin-bottom: 5px;
+	margin-top: 10px
+}
+
+.datepicker-field, .confirm-field, .sb-tour-field {
+	border: 1px solid #51AEEC !important;
+	box-shadow: inset 0px 0px 13px #B2DAFF !important;
+	border-radius: 3px !important;
+	height: 35px !important;
+	font-weight: bold;
+	vertical-align: baseline;
+	background: transparent;
+}
+
+.tour-widget {
+	width: auto;
+	height: auto;
+	display: inline-block;
+	float: right;
+}
+
+#datepicker {
+	display: inline-block;
+	float: right;
+}
+
+#calendar-button {
+	display: inline-block;
+	width: 50px;
+	vertical-align: top;
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	padding: 0;
+}
+
+#calendar-button > img {
+	height: 35px;
+	width: auto;
+	max-width: none;
+	vertical-align: top;
+	
+}
+
+#activity-date-field {
+	display: inline-block;
+	width: 76%;
+	vertical-align: top;
+}
+		
+#datepicker-adults {
+	margin-top: 10px;
+}
+
+.guests-input {
+	display: inline-block!important;
+	width:  50px!important;	
+}
+
+.guests-label {
+	font-size: 1.8em;
+	font-family: "Oxygen";
+	font-wight: 800;
+	padding-left: 5px;
+}
+
+#adults-label {
+	color: #236FAC;
+}
+
+#children-label {
+	color: #D32092;
+}
+
+#promo-label {
+	margin-bottom: 5px;
+	color: black;
+	font-weight: bold;
+}
+
+#datepicker-submit-div {
+	display: block;
+}
+
+#submit {
+	display: block;
+	position: relative;
+	margin: 0 auto;
+	margin-top: 10px;
+	text-align: center;
+}
+
+/* booking-box calendar */
+#pop-up-calendar {
+	width: 196px;
+	display: none;
+	position: absolute;
+	margin-left: 100px;
+	background-color: #eeeeee;
+	border: 4px solid #dddddd;
+	border-radius: 10px;
+	z-index: 900;
+}
+
+#datepicker-head {
+	width: auto;
+	background-color: #f6a828;
+	border: 1px solid #e78f08;
+	font-size: .8em;
+	text-align: center;
+	box-shadow: inset 0px 0px 3px white;
+	border-radius: 10px;
+	color: white;
+	margin: 0 auto;
+	display: block;
+	position: relative;
+}
+
+.datepicker-button {
+	margin: 0;
+	height: 20px;
+	width: 10px;
+	padding: 0px 16px 0px 2px;
+	line-height: 0px;
+	border-radius: 10px;
+}
+
+#datepicker-forward-one {
+	float: right;
+}
+#datepicker-back-one {
+	float: left;
+}
+
+tbody {
+	margin: 0 auto;
+	display: block;
+	position: relative;
+}
+
+#datepicker-month {
+	padding: 0 20px;
+}
+
+#datepicker-table {
+	margin: 0 auto;
+	display: block;
+	border-spacing: 2px;
+	border-collapse: separate;
+}
+
+.datepicker-td {
+	width: 18px;
+	text-align: center;
+}
+
+.date_any {
+	border-radius: 2px;
+	margin: 1px;
+	padding: 2px;
+	border: 1px solid #cccccc;
+	font-size: .7em;
+	text-align: right;
+}
+
+.date_today {
+}
+.date_past, .unavailable {
+	opacity: .35;
+	color: #777;
+}
+
+.date_selected {
+    background-color: #1D9FE6;
+    color: white;
+}
+
+.available {
+
+	cursor: pointer;
+	color: #1c94c4;
+}
+
+.unavailable {
+	background-color: gray;
+	color: black;
+}
+
+#datepicker-pick-a-date-wrapper {
+	display: inline-block;
+	width: 100%;
+	height: auto;
+}
+
+.datepicker-weekday {
+	font-size: 12px;
+}
+
+
+/* Modal/Overlay */
+
+#booking-box {
+	background-color: blue;
+	position: relative;
+	color: white;
+	padding: 20px;
+	margin: 0 auto;
+	border-radius: 20px;
+	background-color: #1D9FE6;
+	border: 2px solid #FAFEFF;
+	box-shadow: 2px 2px 10px 1px #001F55;
+	-webkit-box-shadow: 2px 2px 10px 1px #001F55;
+	-moz-box-shadow: 2px 2px 10px 1px #001F55;
+}
+
+#overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: .7;
+	filter: alpha(opacity=70);
+	background-color: black;
+	z-index: 300;
+}
+
+#modal, #modal-content, #booking-box {
+	width: 600px;
+	height: auto;
+	box-sizing: border-box;
+}
+
+#modal {
+	position: fixed;
+	width: 50%;
+	top: 20%;
+	margin-right: auto;
+	right: 0;
+	left: 0;	
+	margin-left: auto;
+	border-radius:14px;
+	opacity: 0;
+	z-index: 400;
+}
+
+#modal-content {
+	text-align: center;
+	position: relative;
+	margin: 0 auto;
+	background-color: blue;
+	width: 600px;
+	min-height: 50px;
+	color: white;
+	padding: 20px;
+	border-radius: 20px;
+	background-color: #1D9FE6;
+	border: 2px solid #FAFEFF;
+	box-shadow: 2px 2px 10px 1px #001F55;
+	-webkit-box-shadow: 2px 2px 10px 1px #001F55;
+	-moz-box-shadow: 2px 2px 10px 1px #001F55;
+}
+
+#modal-close {
+    position:absolute;
+    background: url('x-mark.png');
+	width:24px;
+    height:24px;
+    display:block;
+    text-indent:-9999px;
+    top:22px;
+    right:20%;
+}
+
+
+.booking-td {
+	color: white;
+}
+
+.confirm-label {
+	color: white;
+}
+
+.table-head {
+	color: white;
+}
+
+.booking-td {
+	width: 225px;
+	box-sizing: border-box;
+	padding-right: 0;
+}
+
+.td-mid {
+	width: 100px;
+}
+	
+.review-booking-block {
+	vertical-align: top;
+	display: inline-block;
+	width: 48%;
+}
+
+#review-booking-table {
+	width: 75%;
+	height: auto;
+	margin: 0 auto;
+	display: block;
+}
+
+.confirm-field {
+	display: inline-block!important;
+	float: right;
+	
+	
+}
+
+.confirm-booking-h5 {
+	color: #fb9f1a!important;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	text-align: left;
+}
+
+.confirm-label {
+	display: inline-block;
+	padding-left: 5px;
+}
+
+#extra-information {
+	margin-top: 20px;	
+}
+
+.boarding-div {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+#ajax-loader-gif {
+	display: block;
+	margin: 0 auto;
+}
+
+/* Order Receipt Page */
+
+@media only screen and (max-width: 700px) {
+	#booking-confirmed {
+		width: 100%;
+		padding: 0;
+		border: none;
+	}
+
+}

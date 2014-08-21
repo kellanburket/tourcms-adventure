@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<meta_box>
+	<params>
+		<id>tour_special_information_meta_box</id>
+		<title>Special Information</title>
+		<context>advanced</context>
+		<priority>high</priority>
+	</params>
+	<wp_postmeta>special_information</wp_postmeta>
+	<editor>
+		<settings>
+			<wpautop>false</wpautop>
+			<media>true</media>
+			<tabindex>3</tabindex>
+		</settings>
+	</editor>
+</meta_box>

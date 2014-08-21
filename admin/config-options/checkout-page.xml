@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<page>
+	<labels>
+		<name>Checkout Pages</name>
+		<singular_name>Checkout</singular_name>		
+	</labels>	
+	<public>true</public>
+	<publicly_queryable>true</publicly_queryable>
+	<show_ui>true</show_ui>
+	<show_in_menu>edit.php?post_type=tourcms</show_in_menu>
+	<query_var>true</query_var>
+	<rewrite>
+		<slug>tourcms_checkout</slug>
+	</rewrite>
+	<capability_type>post</capability_type>
+	<has_archive>false</has_archive>
+	<hierarchical>false</hierarchical>
+	<menu_position></menu_position>
+	<supports type="array">
+	</supports>
+</page>
