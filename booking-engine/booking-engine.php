@@ -305,7 +305,7 @@ class TourcmsBookingEngine {
 		foreach($this->rates as $rate) {
 			if ($rate['number'] > 0) {
 				$return .= '<tr class="booking-tr">';
-				$return .= sprintf('<td class="booking-td">%d %s at $%1.2f</td><td class="booking-td td-mid"></td><td class="booking-td">$%1.2f</td>',
+				$return .= sprintf('<td class=" color-white booking-td">%d %s at $%1.2f</td><td class="booking-td color-white td-mid"></td><td class="booking-td color-white">$%1.2f</td>',
 					$rate['number'],
 					($rate['number'] > 1) ? $rate['kind'] : get_singular($rate['kind']),
 					$rate['rate'],
@@ -369,13 +369,15 @@ class TourcmsBookingEngine {
 		return $return;
 	}
 	
-	function process_options_data(&$component, $availability, $options_data, $rates_data = 0) {
+	function process_options_data(&$component, $availability, $options_data, $rates_data = array()) {
 		$options_added = false;
-		
-		foreach($rates_data as $rate) {
-			if ($rate['kind'] == 'infants') {
-				$options_data = array_merge($options_data, $rate);
-				break;
+
+		if (is_array($rates_data)) {		
+			foreach($rates_data as $rate) {
+				if ($rate['kind'] == 'infants') {
+					$options_data = array_merge($options_data, $rate);
+					break;
+				}
 			}
 		}
 		

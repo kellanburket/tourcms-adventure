@@ -205,7 +205,7 @@ class TourcmsBookingBoxWidget extends WP_Widget {
                 	<div id="datepicker-submit-div">
                         <input type="submit" value="BOOK NOW" id="datepicker-submit" <?php echo $prefill['submit']; ?>>
                     </div>
-                    <?php wp_nonce_field('start_new_booking', '_tourcms_footer_nonce', true, true); ?>            
+                    <?php wp_nonce_field('tourcms_checkout', '_tourcms_footer_nonce', true, true); ?>            
                 </form>
                    
             </div>

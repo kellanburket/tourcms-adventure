@@ -59,9 +59,9 @@ add_filter('title_save_pre', function($post_title) {
 				$tour = $tourcms->show_tour($tour_id, $channel_id);	
 				
 				if ($tour) {
-					update_post_meta($post->ID, 'tour_id', strip_tags($tour->tour->tour_id->asXML()));
+					update_post_meta($post->ID, 'tour_id', (string) $tour->tour->tour_id);
 					if (!$post_title) {
-						return $tour->tour->tour_name_long;
+						return (string) $tour->tour->tour_name_long;
 					}
 				}
 			}

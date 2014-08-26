@@ -767,37 +767,26 @@ tbody {
 	font-size: 12px;
 }
 
+.color-white {
+	color: white!important;
+}
 
 /* Modal/Overlay */
-
-#booking-box {
-	background-color: blue;
-	position: relative;
-	color: white;
-	padding: 20px;
-	margin: 0 auto;
-	border-radius: 20px;
-	background-color: #1D9FE6;
-	border: 2px solid #FAFEFF;
-	box-shadow: 2px 2px 10px 1px #001F55;
-	-webkit-box-shadow: 2px 2px 10px 1px #001F55;
-	-moz-box-shadow: 2px 2px 10px 1px #001F55;
-}
 
 #overlay {
 	position: fixed;
 	top: 0;
 	left: 0;
+	top: 0;
+	bottom: 0;
 	width: 100%;
-	height: 100%;
 	opacity: .7;
 	filter: alpha(opacity=70);
 	background-color: black;
-	z-index: 300;
+	z-index: 9997;
 }
 
 #modal, #modal-content, #booking-box {
-	width: 600px;
 	height: auto;
 	box-sizing: border-box;
 }
@@ -805,24 +794,34 @@ tbody {
 #modal {
 	position: fixed;
 	width: 50%;
-	top: 20%;
-	margin-right: auto;
+	top: 0;
+	left: 0;
 	right: 0;
-	left: 0;	
-	margin-left: auto;
+	bottom: 0;
+	margin: auto;
 	border-radius:14px;
 	opacity: 0;
-	z-index: 400;
+	z-index: 9998;
 }
+
+#booking-box {
+	position: relative;
+	padding: 20px;
+	margin: 0 auto;
+	box-sizing: border-box;
+}
+
+.confirm-booking-h5, .confirm-label, .table-head {
+	color: white;
+}
+
 
 #modal-content {
 	text-align: center;
 	position: relative;
 	margin: 0 auto;
 	background-color: blue;
-	width: 600px;
 	min-height: 50px;
-	color: white;
 	padding: 20px;
 	border-radius: 20px;
 	background-color: #1D9FE6;
@@ -838,18 +837,15 @@ tbody {
 	width:24px;
     height:24px;
     display:block;
-    text-indent:-9999px;
     top:22px;
-    right:20%;
+    right:22px;
 }
 
-
-.booking-td {
-	color: white;
-}
 
 .confirm-label {
 	color: white;
+	display: table-cell;
+	padding-left: 5px;
 }
 
 .table-head {
@@ -879,11 +875,19 @@ tbody {
 	display: block;
 }
 
+
+.booking-td {
+	position: relative;
+}
+
+.booking-td fieldset {
+	position: relative;
+}
+
 .confirm-field {
-	display: inline-block!important;
-	float: right;
-	
-	
+	position: relative;
+	font-family: Arial!important;
+	color: black!important;
 }
 
 .confirm-booking-h5 {
@@ -891,11 +895,6 @@ tbody {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	text-align: left;
-}
-
-.confirm-label {
-	display: inline-block;
-	padding-left: 5px;
 }
 
 #extra-information {

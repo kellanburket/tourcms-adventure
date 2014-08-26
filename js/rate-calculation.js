@@ -209,7 +209,6 @@ $(document).ready(function() {
 		
 		if (!isItARealDate) {
 			modal.open({content: errors.date_error.message});
-			modal.handle();
 			return false;
 		}
 			
@@ -256,7 +255,6 @@ $(document).ready(function() {
 				}
 			} else if (data.success == false) {
 				modal.open({content: data.error_message});
-				modal.handle();
 				$('#sb-submit').prop('disabled', false);
 				$('#sb-tour-spinning-loader').hide();
 				$('#sb-tour-submit-text').text(button_text);
@@ -268,7 +266,6 @@ $(document).ready(function() {
 			//console.log(data);
 			//alert(errors.server);
 			modal.open({content: data.error_message});
-			modal.handle();
 			$('#sb-submit').prop('disabled', false);
 			$('#sb-tour-spinning-loader').hide();
 			$('#sb-tour-submit-text').text(button_text);
@@ -297,12 +294,18 @@ $(document).ready(function() {
 		var booking_box_rates_data = new Array();
 		booking_box_rates_data.push({kind: booking_box_tour_rates[0].kind, number: booking_box_tour_rates[0].number, rate: booking_box_tour_rates[0].getRevisedRate(), total: booking_box_tour_rates[0].getTotal()});
 		booking_box_rates_data.push({kind: booking_box_tour_rates[1].kind, number: booking_box_tour_rates[1].number, rate: booking_box_tour_rates[1].getRevisedRate(), total: booking_box_tour_rates[1].getTotal()});
-		
-		modal.open({content: '<div id="modal-content"><div id="booking-box"><p class="modal-wait-message">Please wait while we retrieve booking information...</p></div></div>'});
-		$('#pop-up-calendar').hide();
-		
+
 		nonce = $('[name=_tourcms_footer_nonce]').val();
 		$(this).prop('disabled', true);
+		$submit = $(this);		
+		modal.open(
+			{
+				content: '<p class="modal-wait-message color-white">Please wait while we retrieve booking information...</p>',
+				callback: function() { $submit.prop('disabled', false); }	
+			}
+		);
+		$('#pop-up-calendar').hide();
+		
 
 		$.post(
 			ajax.url, 
@@ -317,65 +320,115 @@ $(document).ready(function() {
 				tour_name: $('#tour_name').val(),
 				user_id: $("input[name=user_id]").val()
 			}, function(data){
-				modal.open({content: data});
-				
-				$('#confirm-booking').click(function(event){
-					event.preventDefault();
-					event.stopPropagation();
-					
-					$(this).prop('disabled', true);
-					$('.modal-options').each(function() {
-						var kind = $(this).find('[name=modal_kind]');
-						var rate = $(this).find('[name=modal_rate]');
-						modal_options[kind] = new Option(kind, rate);
-						modal_options[kind].number = $(this).find('[name=modal_number]'); 
-						//modal_options[kind].total = modal_options[kind].number * modal_options[kind].rate; 
-					});
-					
-					document.body.style.cursor='wait';
-					$.post(
-						ajax.url, 
+				console.log(data);
+				if (data.success) {
+					modal.updateContent(
 						{
-							action: ajax.action,
-							sales_tax: sales_tax,
-							callback: "confirm_tour_booking",
-							hotel: $('#hotel-field').val(),
-							room: $('#room-field').val(),
-							options_data: getOptionsData(modal_options),
-							user_id: $("input[name=user_id]").val(), 
-						},
-						function(data){
-							if (data.success == true) {
-								if (data.debug == true) {
-									console.log(data);
-									alert ('In Debug Mode');
-								} 
-								window.location = data.checkout_url + '&_tourcms_footer_nonce=' + nonce;
-							} else {
-								//console.log(data);
-							}
-						}, 
-						'json'
-						).fail(function(data) {
-							alert(data.error_message);
-							$(this).prop('disabled', false);
-						}).always(function(data) {
-							document.body.style.cursor='default';			
+							content: data.html,
+						}
+					);
+					/*				
+					$('.confirm-field').keydown(function() {
+						console.log("Confirm Keydown");
+						//$(this).hide().show();
+						//$(this).offset().top; //force redraw
+						//$('#modal').offset().top;
+						//forceRedraw(document.getElementById('modal'));
+					});
+					$('.confirm-field').focus(function() {
+						console.log("Confirm Focus");
+						//$(this).hide().show();
+						//$(this).offset().top; //force redraw
+						//$('#modal').offset().top;
+						//forceRedraw(document.getElementById('overlay'));
+					});
+					*/
+					
+					$('#confirm-booking').click(function(event){
+						event.preventDefault();
+						event.stopPropagation();
+						
+						$(this).prop('disabled', true);
+						$('.modal-options').each(function() {
+							var kind = $(this).find('[name=modal_kind]');
+							var rate = $(this).find('[name=modal_rate]');
+							modal_options[kind] = new Option(kind, rate);
+							modal_options[kind].number = $(this).find('[name=modal_number]'); 
+							//modal_options[kind].total = modal_options[kind].number * modal_options[kind].rate; 
 						});
-					return false;
-				});
-				modal.handle();
-			}
-		).fail(function(data) {
-			alert(data.error_message);
-			$(this).prop('disabled', false);
-		}).always(function(data) {
-			document.body.style.cursor='default';			
-		});
+						
+						document.body.style.cursor='wait';
+						$.post(
+							ajax.url, 
+							{
+								action: ajax.action,
+								sales_tax: sales_tax,
+								callback: "confirm_tour_booking",
+								hotel: $('#hotel-field').val(),
+								room: $('#room-field').val(),
+								options_data: getOptionsData(modal_options),
+								user_id: $("input[name=user_id]").val(), 
+							},
+	
+							function(data){
+								//console.log(data);
+								if (data.success == true) {
+									if (data.debug == true) {
+										console.log(data);
+										alert ('In Debug Mode');
+									} 
+									
+									var url = ajax.siteurl + '/' + data.checkout_url + '&_tourcms_footer_nonce=' + nonce;
+									console.log(url);
+									window.location = url;
+								} else {
+									console.log(data);
+								}
+							}, 
+							'json'
+							).fail(function(data) {
+								console.log(data.responseText);
+								$(this).prop('disabled', false);
+							}).always(function(data) {
+								document.body.style.cursor='default';			
+							});
+						return false;
+					});
+				} else {
+					modal.updateContent(
+						{
+							content: '<p class="color-white">' + data.error_message + '</p>'
+						}
+					);
+				}
+			},
+			'json'
+			).fail(function(data) {
+				alert(data.error_message);
+				$(this).prop('disabled', false);
+			}).always(function(data) {
+				document.body.style.cursor='default';			
+			});
 		}
 	});
 	
 });
+
+function forceRedraw(element){
+	console.log("Element", element);
+    if (!element) { return; }
+
+    var n = document.createTextNode(' ');
+    var disp = element.style.display;  // don't worry about previous display style
+
+    element.appendChild(n);
+    element.style.display = 'none';
+
+    setTimeout(function(){
+        element.style.display = disp;
+        n.parentNode.removeChild(n);
+    },20); // you can play with this timeout to make it as short as possible
+}
 
 function get_rates_data() {
 	var data = new Array();
@@ -508,6 +561,7 @@ function init_cursor_events($confirm_field) {
 	});
 	
 	$confirm_field.keydown(function(event) {
+		console.log("Key Down");
 		var kind = new RegExp($(this).data('kind'), "i");
 		var category = $(this).data('category');
 		

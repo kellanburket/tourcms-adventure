@@ -127,7 +127,7 @@ function load_modal($post) {
 	if ($object->success == false) {
 		echo $message;
 	} else {
-		echo $engine->display_options($tourcms, $channel_id);	
+		echo json_encode(array('success'=>true, 'html'=>$engine->display_options($tourcms, $channel_id)));	
 	}
 	exit;
 }

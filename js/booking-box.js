@@ -1,6 +1,4 @@
 jQuery(document).ready(function($) {
-
-		
 	$('#datepicker-select').change(function(event){
 		event.preventDefault();
 		event.stopPropagation();
@@ -9,4 +7,4 @@ jQuery(document).ready(function($) {
 			$('#the_tour').val(this_tour);
 		});
 	});
-	});
+});

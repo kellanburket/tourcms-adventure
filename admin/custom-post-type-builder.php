@@ -92,7 +92,6 @@ class CustomPostTypeBuilder {
 	
 	function save($post_id) {
 		global $post;
-
 		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) 
 			return $post_id;
 
@@ -106,20 +105,29 @@ class CustomPostTypeBuilder {
 				return $post_id;
 		}
 
+			
 		if(is_array($this->meta_boxes)) {		
 			foreach($this->meta_boxes as $id => $box) {			
 				$nonce_id = $id.'_nonce';
-				if ( ! isset( $_POST[$nonce_id] ) )
+				//echo "{$nonce_id}<br>";
+				if ( ! isset( $_POST[$nonce_id] ) ) {
+					//echo "Nonce Not Set({$nonce_id})";
+					//exit;					
 					return $post_id;
+				}				
 				
 				$nonce = $_POST[$nonce_id];
-	
-				if (!wp_verify_nonce($nonce, $id) )
+
+				if (!wp_verify_nonce($nonce, $id) ) {
+					//echo "Failed Nonce Check({$nonce_id})";
+					//exit;					
 					return $post_id;
+				}
+
 
 				$name = $box['wp_postmeta']; 
 				$new_value = (isset($_POST[$name]) ? wp_kses_post( $_POST[$name] ) : '' );
-				
+				//echo "{$new_value}<br>";
 				update_post_meta($post_id, $name, $new_value);
 			}
 		}

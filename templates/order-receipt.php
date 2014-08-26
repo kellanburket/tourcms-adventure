@@ -7,6 +7,10 @@ require_once(dirname(__FILE__).'/../tourcms_adventure.php');
 require_once(dirname(__FILE__).'/../tools/tourcms-toolbox.php');
 require_once(dirname(__FILE__).'/../lib/anet_php_sdk/AuthorizeNet.php'); // The SDK
 require_once(dirname(__FILE__)."/../lib/tourcms/config.php");
+$plugin_url = plugins_url().'/tourcms-adventure';
+
+wp_enqueue_style("choose_your_adventure_css", $plugin_url."/css/adventure-style.css", null, false, false);
+
 
 extract($_POST);
 
@@ -48,9 +52,9 @@ get_header();
 	<h1><?php echo get_option('tourcms_receipt_page_head'); ?></h1>
 	<h4><?php echo get_option('tourcms_receipt_page_text'); ?></h4>
     <p><?php echo get_option('tourcms_receipt_page_note'); ?></p>
+	
+	<p style="text-align: center">Please DO NOT hit your browsers back button or your card may be charged again.</p>
 </div>
-
-<br><br>Please DO NOT hit your browsers back button or your card may be charged again.<br><br>
  
 <style>
   .FullRowCell a:link { color:#FFFFFF; }
