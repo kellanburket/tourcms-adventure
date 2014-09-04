@@ -78,7 +78,7 @@ class LiveTourCMSCalendar {
     	$months = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 		$days_of_week = array("Su", "Mo", "Tu", "We", "Th", "Fr", "Sa");
 		
-		$return = '<table id="'.$this->table_id.'" class="tourcms-live-calendar"><tr>';
+		$return = '<table id="'.$this->table_id.'" class="tourcms-live-calendar-table"><tr>';
         
 		foreach($days_of_week as $value) {
 			$return .= '<td class="'.$this->weekday_class.'">'.$value.'</td>';

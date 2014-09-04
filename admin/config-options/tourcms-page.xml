@@ -10,7 +10,7 @@
 	<show_in_menu>true</show_in_menu>
 	<query_var>true</query_var>
 	<rewrite>
-		<slug>tourcms</slug>
+		<slug>trips</slug>
 	</rewrite>
 	<capability_type>post</capability_type>
 	<has_archive>true</has_archive>

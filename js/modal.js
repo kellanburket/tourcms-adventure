@@ -1,14 +1,19 @@
 var modal = (function($){
 	var method = {}, $overlay, $modal, $content, $close, $loader;
 		
-	$overlay = $('<div id="overlay"></div>');
-	$modal = $('<div id="modal"></div>');
+	$overlay = $('<div>', {id: "overlay"});
+	$modal = $('<div>', {id: "modal"});
+
 	$loader = $('');
-	$content = $('<div id="modal-content"></div>');
-	$close = $('<a id="modal-close" href="#"></a>');
-	
+	$content = $('<div>', {id: "modal-content"});
+
+	$close = $('<a>', {id: "modal-close", href: "#"});
+
+	$OK = $('<button>', {text: 'OK', class: 'ok-button'});
+
 	$modal.hide();
 	$overlay.hide();
+
 	$modal.append($content, $close);
 
 	$(document).ready(function(){
@@ -32,14 +37,26 @@ var modal = (function($){
 			method.close(event, settings.callback);
 		});
 
+		$OK.on('click', function(event) {
+			method.close(event, settings.callback);
+		});
+
 		$overlay.on("click", function(event) {
-			//method.close(event, settings.callback);
+			method.close(event, settings.callback);
 		});
 
 	};
 	
+	method.displayMessage = function(message) {
+		method.open({
+			content: $('<div>').append(
+				$('<p>', {text: message, class: 'color-white'}),
+				$OK
+			)
+		});
+	};
+	
 	method.updateContent = function(settings) {
-		$modal.offset().top; 		// for forced redraw
 		$content.empty().append(settings.content);
 		var height = $content.height();
 		$modal.css({height: height});
@@ -49,7 +66,10 @@ var modal = (function($){
 		event.stopPropagation();
 		event.preventDefault();
 		
-		callback();
+		if (typeof callback == "function") {
+			callback();
+		}
+		
 		$modal.css({opacity: 0, display: "none"});
 		$overlay.css({opacity: 0, display: "none"});
 		$content.empty();

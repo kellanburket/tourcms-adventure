@@ -66,24 +66,34 @@ function update_calendar($post) {
 }
 
 function fetch_rates_data($post) {
-	$tourcms = load_tourcms();
-	$channel_id = SiteConfig::get("channel_id");
+	$id = ($_POST['tour_id']) ? intval($_POST['tour_id']) : 1;
 
-	extract($post);
-
-	$data = $tourcms->search_raw_departures($tour_id, $channel_id);
-	$rates_data = $data->tour->dates_and_prices->departure->rates->rate;
-
-	foreach ($rates_data as $rate) {
-		$values = array(
-			'kind' => strtolower(strip_tags($rate->rate_name->asXML())),
-			'rate' => floatval(strip_tags($rate->customer_price->asXML())) + 10
-		);
-		$rates[] = $values;
+	$cache_file = dirname(__FILE__)."/cache/tour_{$id}.xml";	
+	if(get_tourcms_cache($cache_file, 1)) {
+		$tourcms = load_tourcms();
+		$tours = $tourcms->search_raw_departures($id, SiteConfig::get("channel_id"));
+		file_put_contents($cache_file, $tours->asXML());				
+	} else {
+		$tours = simplexml_load_file($cache_file);				
 	}
 
-	echo json_encode($rates);
-	exit;
+	$error = (string) $tours->error;	
+
+	if ($error == 'OK') {
+
+		$rates_data = $tours->tour->dates_and_prices->departure->rates->rate;
+		$rates = array();
+		foreach ($rates_data as $rate) {
+			$values = array(
+				'kind' => strtolower(strip_tags($rate->rate_name->asXML())),
+				'rate' => floatval(strip_tags($rate->customer_price->asXML())) + 10
+			);
+			$rates[] = $values;
+		}
+	
+		echo json_encode($rates);
+		exit;
+	}
 }
 
 function start_booking_engine($post) {
@@ -132,6 +142,58 @@ function load_modal($post) {
 	exit;
 }
 
+function get_tourcms_cache($cache_file, $hours = 24) {
+	$time = filemtime($cache_file);
+	$current_time = time();
+	$time_passed = $current_time - $time;
+	if ($time_passed > (60 * 60 * $hours)) {
+		return true;
+	} else {
+		return false;
+	}
+	
+}
+
+function fetch_tours_data($print = true) {
+	$cache_file = dirname(__FILE__)."/cache/all_tours.json";
+	if(get_tourcms_cache($cache_file, 1)) {
+		$tourcms = load_tourcms(); 
+		
+		$channel_id = SiteConfig::get("channel_id");
+		$tours = $tourcms->list_tours($channel_id)->tour; 
+		$data = array();
+		
+		foreach($tours as $tour) {
+			$id = (string) $tour->tour_id;		
+			$next = $tourcms->show_tour($id, SiteConfig::get("channel_id"));
+			$next = KBC_XML_Parser::parse($next->tour);
+
+
+			if ($next['next_bookable_date']) {
+				list($year, $month, $day) = sscanf($next['next_bookable_date'], '%d-%d-%d');
+				$datum = array();						
+
+				$datum['next_bookable_date'] = $month.'/'.$day.'/'.$year;
+				$datum['from_price'] = (float) $next['from_price'];			
+				$datum['id'] = (int) $id;			
+				$datum['tour_name'] = $next['tour_name_long'];
+
+				$data[$id] = $datum;				
+			}
+		}
+
+		file_put_contents($cache_file, json_encode($data));		
+	} else {
+		$data = json_decode(file_get_contents($cache_file), true);		
+	}
+
+	if ($print) {
+		echo json_encode($data);
+		exit;
+	} else {
+		return $data;
+	}
+}
 	
 function load_tourcms() {
 	if (!class_exists('TourCMS')) {

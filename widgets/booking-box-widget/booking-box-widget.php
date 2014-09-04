@@ -14,7 +14,6 @@ class TourcmsBookingBoxWidget extends WP_Widget {
 			'subtitle' => array('label'=>'Subtitle', 'type'=>'text'),
 			'call_to_action' => array('label'=>'Call to Action', 'type'=>'text')			
 		);
-		
 		$this->debug = get_option('tourcms_debug_mode');
 	}
 
@@ -77,9 +76,12 @@ class TourcmsBookingBoxWidget extends WP_Widget {
 	
 	function update($new_instance, $old_instance) {
 		$instance = wp_parse_args( (array) $old_instance, array_flip(array_keys($this->fields)));
+		//print_r($instance);
+		//print_r($new_instance);
+		//exit;
 		
 		foreach ($instance as $key => $value) {
-			$instance[$key] = strip_tags($new_instance[$key]);
+			$instance[$key] = sanitize_text_field($new_instance[$key]);
 		}
 		return $instance;
 	}
@@ -92,37 +94,28 @@ class TourcmsBookingBoxWidget extends WP_Widget {
 			$this->tour_id = get_post_meta($post->ID, 'tour_id', true);
 		}
 		
-		$channel_id = SiteConfig::get("channel_id");
-		$tourcms = load_tourcms(); 
-		$tours = $tourcms->list_tours($channel_id)->tour; 
-		$tour_select = $this->get_tour_select_options($tours);
+		$data = fetch_tours_data(false);
+		$tour_select = $this->get_tour_select_options($data);
 		
 		$call_to_action = empty($instance['call_to_action']) ? '&nbsp;' : $instance['call_to_action'];
 		$title = empty($instance['title']) ? '&nbsp;' : $instance['title'];
 		$subtitle = empty($instance['subtitle']) ? '&nbsp;' : $instance['subtitle'];
-		
-		$params = 'tour_id='.$this->tour_id.'&distinct_start_dates=1';		
-		$result = $tourcms->show_tour_datesanddeals($this->tour_id, $channel_id, $params);
-		if ($result->error == 'OK') {
-			list($year, $month, $day) = sscanf($result->dates_and_prices->date[0]->start_date, '%d-%d-%d');
-			$next_available = $month.'/'.$day.'/'.$year;
-		}
-		
-		$this->display($call_to_action, $title, $subtitle, $tour_select, $next_available);
+		$this->display($call_to_action, $title, $subtitle, $tour_select, $data['next_date']);
 	}
 	
 	function get_tour_select_options($tour) {
 		global $post;
 		$return = '';
+		
 		foreach ($tour as $key=>$value) {
-			$return .= '<option value="'.$value->tour_id.'"';
-			if ($value->tour_id == $this->tour_id) {
-				$this->tour_name = $value->tour_name;
+			$return .= '<option value="'.$value['id'].'"';
+			if ($value['id'] == $this->tour_id) {
+				$this->tour_name = $value['tour_name'];
 				$return .= ' selected';
 				
 			}
         	
-        	$return .= '>'.$value->tour_name.'</option>';
+        	$return .= '>'.$value['tour_name'].'</option>';
         }
 
         return $return;
@@ -166,17 +159,17 @@ class TourcmsBookingBoxWidget extends WP_Widget {
                         <h6 class="datepicker-h6">Activity Date</h6>
                         <div id="datepicker-pick-a-date-wrapper">
                             <input type="text" id="activity-date-field" name="datepicker_activity_date" class="datepicker-field" value="<?php echo $next_available; ?>">
-                            <button id="calendar-button">
+                            <div id="calendar-button">
                                 <img src="<?php echo TOURCMS_URL; ?>/img/calendar-icon.png" />
-                            </button>
-                            <div id="pop-up-calendar">
+                            </div>
+                            <div id="pop-up-calendar" class="tourcms-live-calendar">
 
                                 <div id="datepicker-head">
                                     <button id="datepicker-back-one" class="back-one datepicker-button" disabled>&larr;</button>
                                     <span id="datepicker-month"><?php echo date("F")." ".date("Y"); ?></span>
                                     <button id="datepicker-forward-one" class="forward-one datepicker-button">&rarr;</button>
                                 </div>
-                                <table id="datepicker-table" class="tourcms-live-calendar"></table>
+                                <div class="table-wrapper"></div>
                                 
                             </div>
                         </div>

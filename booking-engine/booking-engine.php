@@ -252,9 +252,9 @@ class TourcmsBookingEngine {
 		$customer[0]->tel_mobile = $this->validate_string($post['tel_mobile']);
 
 		$final_booking = $tourcms->start_new_booking($booking, $channel_id);
-		$error = strip_tags($final_booking->error->asXML());
+		$error = (string) $final_booking->error;
 		if ($error == "OK") {
-			$this->final_booking_id = strip_tags($final_booking->booking->booking_id->asXML());
+			$this->final_booking_id = (string) $final_booking->booking->booking_id;
 			
 			$this->booking_fee = array();			
 			$this->booking_fee['display'] = (string) $result->booking->booking_fee->fee_display;
@@ -263,16 +263,23 @@ class TourcmsBookingEngine {
 			$this->booking_fee['fee'] = (float) $result->booking->booking_fee->fee;
 
 			$this->save_order();
-			return json_encode(array("success"=>true, "debug"=>$this->debug, "user_id"=>$this->user_id, "booking_id"=>$this->final_booking_id));
+			return json_encode(array(
+				"success"=>true, 
+				"debug"=>$this->debug, 
+				"user_id"=>$this->user_id, 
+				"booking_id"=>$this->final_booking_id
+			));
+	
 		} else {
 			return $this->return_message($this->tourcms_technical_problem, $error); 
 		}
 		
 	}
-		
+			
 	public function confirm_booking($post, $tourcms, $channel_id) {
 		$booking = simplexml_load_string($this->booking);	
 		extract($post);
+		$this->totals_string = $totals_string;
 		$availability = $this->check_tour_availability($tourcms, $channel_id);
 		$booking->components->component->note = $hotel.', '.$room;
 		$this->validate_options($options_data);
@@ -339,18 +346,21 @@ class TourcmsBookingEngine {
 									
 			
 		if (count($tour_options) > 0) {
+			
+		
 			$return .= '<h5 class="confirm-booking-h5">Available Upgrades</h5>';
 			$return .= '<table id="available-upgrades">';
 		
 			for ($i = 0; $i < count($tour_options); $i++) {
+				$display_price = round(floatval($tour_options[$i]->from_price) / (floatval(floatval(get_option('tourcms_sales_tax')) / 100) + 1), 2);
 				$return .= '<tr>';
 				$return .= '<td class="booking-td confirm-label">'.$tour_options[$i]->option_name.': </td>';
-				$return .= '<td class="booking-td confirm-label td-mid">'.$tour_options[$i]->from_price_display.'</td>';	
+				$return .= '<td class="booking-td confirm-label td-mid">$'.sprintf('%.2f', $display_price).'</td>';	
 				$return .= '<td class="booking-td">';
-				$return .= '<fieldset class="modal_options['.$i.']" class="modal-options">';
+				$return .= '<fieldset name="modal_options['.$i.']" class="modal-options">';
 				$return .= '<input type="number" name="modal_number" id="modal-option-number-field-'.$i.'" class="confirm-field" min="0">';
 				$return .= '<input type="hidden" name="modal_kind" value="'.$tour_options[$i]->option_name.'" id="modal-option-kind-field-'.$i.'">';
-				$return .= '<input type="hidden" name="modal_rate" value="'.$tour_options[$i]->price.'" id="modal-option-rate-field-'.$i.'" >';
+				$return .= '<input type="hidden" name="modal_rate" value="'.$display_price.'" id="modal-option-rate-field-'.$i.'" >';
 				$return .= '</fieldset>';
 				$return .= '</td>';					
 				$return .= '</tr>';		

@@ -134,6 +134,7 @@ class KBC_XML_Parser {
 		return KBC_XML_Parser::parse(simplexml_load_file($path), $debug);	
 	}
 	
+	
 	public static function parse($xml, $debug = false) {
 		$parser = xml_parser_create();
 		xml_parse_into_struct($parser, $xml->asXML(), $nodes, $pointers);

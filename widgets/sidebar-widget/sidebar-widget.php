@@ -248,15 +248,18 @@ class TourcmsSidebarWidget extends WP_Widget {
             <input name="tour_id" type="hidden" value="<?php echo $tour_id; ?>">
             <input name="user_id" type="hidden" value="<?php echo $user; ?>">
             <div id="sb-tour-pick-a-date-wrapper">
-                <div id="sb-tour-calendar">
-                  
-                    <div id="sb-tour-head">
-                        <button id="sb-tour-back-one" class="back-one sb-tour-button" disabled>&larr;</button>
-                        <?php echo $display_month; ?>
-                        <button id="sb-tour-forward-one" class="forward-one sb-tour-button">&rarr;</button>
-                    </div>
-                   
-                    <div id="tourcms-sidebar-table" class="tourcms-live-calendar"></div>
+                <div id="sb-tour-calendar-wrapper">
+                 	<div class="calendar-spinner fa fa-spinner fa-spin fa-2x"></div>
+	                <div id="sb-tour-calendar" class="tourcms-live-calendar">
+	
+	                    <div id="sb-tour-head">
+	                        <button id="sb-tour-back-one" class="back-one sb-tour-button" disabled>&larr;</button>
+	                        <?php echo $display_month; ?>
+	                        <button id="sb-tour-forward-one" class="forward-one sb-tour-button">&rarr;</button>
+	                    </div>
+	                   
+	                    <div class="table-wrapper"></div>
+	                </div>
                 </div>
                 <ul class="availability-key">
                     <li class="a-key-li">Selected<div id="selected-key"></div></li>
