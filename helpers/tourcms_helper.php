@@ -15,6 +15,9 @@ abstract class tourcms_helper {
 		return 0;	
 	}
 	
+	public function log_error($type, $message, $user) {
+	}
+	
 	public function unlink_reservation($user_id, $booking_id) {
 		//unlink(TOURCMS_ROOT.'/orders/'.$user_id.'.xml');
 		file_put_contents(TOURCMS_ROOT.'/orders/'.$user_id.'.txt', $booking_id);	

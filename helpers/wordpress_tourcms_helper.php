@@ -1,5 +1,7 @@
 <?php
 require_once('tourcms_helper.php');
+global $wpdb;
+define('TOURCMS_BOOKING_TABLE', $wpdb->prefix.'tourcms_bookings');
 
 class wordpress_tourcms_helper extends tourcms_helper {
 
@@ -37,7 +39,11 @@ class wordpress_tourcms_helper extends tourcms_helper {
 	}
 	
 	public function get_authorize_net_test_mode_config() {
-		return get_option('authorize_net_in_test_mode');
+		$mode = get_option('authorize_net_in_test_mode');
+		if (current_user_can('manage_options')) {
+			$mode = true;
+		}
+		return $mode;		
 	}
 	
 	public function get_checkout_url($user_id) {
@@ -81,8 +87,9 @@ class wordpress_tourcms_helper extends tourcms_helper {
 		print_r($wpdb->col_info);
 	}
 	
-	function load_engine($user_id) {
+	function load_engine($user_id, $ip = NULL) {
 		global $wpdb;
+		$ip = ($ip) ? $ip : $_SERVER['REMOTE_ADDR'];
 		require_once(TOURCMS_ROOT.'/booking-engine/booking-engine.php');
 		
 		//echo 'User ID: '.$user_id.'<br>';
@@ -90,7 +97,7 @@ class wordpress_tourcms_helper extends tourcms_helper {
 		//$wpdb->query($wpdb->prepare('SELECT user_id FROM '.TOURCMS_BOOKING_TABLE));
 		//$this->debug_wpdb();		
 		//exit;		
-		$wpdb->query($wpdb->prepare('SELECT engine FROM '.TOURCMS_BOOKING_TABLE.' WHERE user_id = %s', $user_id));		
+		$wpdb->query($wpdb->prepare('SELECT engine FROM '.TOURCMS_BOOKING_TABLE.' WHERE user_id = %s AND client_ip = %s', array($user_id, $ip)));		
 				
 		if ($wpdb->last_result) {
 						
@@ -104,43 +111,79 @@ class wordpress_tourcms_helper extends tourcms_helper {
 				if ($engine->order_completed == false) {
 					return $engine;
 				} else {
+					$this->log_error("helper", "order already processed", $engine->booking_id);
 					echo json_encode(array('success'=>false, 'error_message'=>'This order has already been processed.'));	
 					exit;				
 				}
 			} else {
+				$this->log_error("helper", "error fetching information", $engine->booking_id);
 				echo json_encode(array('success'=>false, 'error_message'=>'There was an error fetching your booking information!'));				exit;
 			}
 		} else {
+			$this->log_error("booking", "No booking information available for this customer!", $engine->booking_id);
 			echo json_encode(array('success'=>false, 'error_message'=>'No booking information available for this customer!'));	
 			exit;
 		}
 	}
 	
-	function save_engine($engine) {
+	public function log_error($type, $message, $booking_id = NULL) {
 		global $wpdb;
+		if (!$booking_id && array_key_exists('user_id', $_POST)) {
+			$engine = $this->load_engine($_POST['user_id']);
+			if (is_object($engine)) {
+				$booking_id = $engine->get_booking_id();
+			}
+		}
+		
+		$wpdb->query($wpdb->prepare("INSERT INTO wp_tourcms_errors (error_type, message, booking_id, ip_address, user_agent) VALUES(%s, %s, %d, %s, %s)", array($type, $message, $booking_id, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']))); 	
+	}
+	
+	function save_engine($engine, $ip = NULL) {
+		global $wpdb;
+		$ip = (!is_null($ip)) ? $ip : $_SERVER['REMOTE_ADDR'];
+
 		$engine_serial = serialize($engine);
-		$wpdb->query($wpdb->prepare('SELECT id FROM '.TOURCMS_BOOKING_TABLE.' WHERE user_id = %s', $engine->user_id));
-		$id = end($wpdb->last_result)->id;
+		$wpdb->query(
+			$wpdb->prepare('
+				SELECT id FROM '.TOURCMS_BOOKING_TABLE.' 
+				WHERE user_id = %s 
+				AND client_ip = %s', 
+				
+				array($engine->user_id, $ip)));
+		
+		if ($wpdb->last_result) {
+			$id = $wpdb->last_result[0]->id;
+		}
 		
 		//echo "\nID: $id";
 		//echo "\nUserID: ".$engine->user_id;
 		//echo "\nEngine ".$engine_serial;
 		
 		if ($id) {
-			$wpdb->replace(TOURCMS_BOOKING_TABLE, 
-				array(
-					'time'=>current_time('mysql'), 
-					'user_id'=>$engine->user_id, 
-					'engine'=>$engine_serial, 
-					'id'=>$id), 
-				array('%s', '%s', '%s', '%d'));
+			$wpdb->query($wpdb->prepare('
+				UPDATE '.TOURCMS_BOOKING_TABLE.' 
+				SET
+				engine=%s,
+				final_total=%f,
+				booking_id=%d,
+				client_name=%s,
+				order_completed=%d
+				WHERE id=%d
+			', array($engine_serial, floatval($engine->total_amount), intval($engine->final_booking_id), $engine->client_name, intval($engine->order_completed), $id)));
 		} else {
 			$wpdb->insert(TOURCMS_BOOKING_TABLE, 
 				array(
 					'time'=>current_time('mysql'), 
 					'user_id'=>$engine->user_id, 
-					'engine'=>$engine_serial), 
-				array('%s', '%s', '%s'));
+					'engine'=>$engine_serial,
+					'client_ip'=>$ip,
+					'total'=>floatval($engine->total_amount),
+					'booking_id'=>intval($engine->temp_booking_id),
+					'client_name'=>$engine->client_name,
+					'order_completed'=>$engine->order_completed,
+					'tour_date'=>$engine->tour_date
+					), 
+				array('%s', '%s', '%s', '%s', '%f', '%d', '%s', '%d', '%s'));
 		}
 	}
 }

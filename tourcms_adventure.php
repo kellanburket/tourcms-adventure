@@ -35,6 +35,7 @@ add_action('wp_enqueue_scripts', function() {
 	wp_register_script("sprintf", $plugin_url.'/js/sprintf.js', array(), false, false);
 	wp_enqueue_script("sprintf");
 	wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
+
 	wp_register_script("tourcms_adventure_js", $plugin_url.'/js/adventure.js', array('jquery', 'sprintf'), false, false);	
 	wp_enqueue_script("tourcms_adventure_js");
 	
@@ -48,17 +49,6 @@ add_action('wp_enqueue_scripts', function() {
     wp_enqueue_style( 'coustard');
 	
 	wp_enqueue_style("choose_your_adventure_css", $plugin_url."/css/adventure-style.css", null, false, false);
-	wp_register_script('rate_calculation', $plugin_url.'/js/rate-calculation.js', array('jquery', 'sprintf', 'tourcms_adventure_js'), false, false);
-	wp_enqueue_script("rate_calculation");
-
-	wp_register_script('tourcms_calendar', $plugin_url.'/js/calendar.js', array('jquery', 'sprintf', 'tourcms_adventure_js', 'rate_calculation'), false, false);
-	wp_enqueue_script("tourcms_calendar");
-
-	wp_register_script('tourcms_booking_box', $plugin_url.'/js/booking-box.js', array('jquery', 'tourcms_calendar', 'tourcms_adventure_js'), false, false);
-	wp_enqueue_script("tourcms_booking_box");
-
-	wp_register_script('tourcms_switchbox', $plugin_url.'/js/switchbox-tabs.js', array('jquery', 'tourcms_adventure_js'), false, false);
-	wp_enqueue_script("tourcms_switchbox");
 
 	
 	if(get_post_type() == MOBILE_TOUR_PAGE || get_post_type() == TOUR_PAGE) {
@@ -68,21 +58,35 @@ add_action('wp_enqueue_scripts', function() {
 	}
 	
 	if(get_post_type() == MOBILE_TOUR_PAGE) {
-		wp_enqueue_style("choose_your_adventure_mobile_css", $plugin_url."/css/tablet-style.css", null, false, false);
-		wp_enqueue_style("choose_your_adventure_tablet_css", $plugin_url."/css/mobile-style.css", null, false, false);
+		wp_enqueue_style("tourcms_tablet_css", $plugin_url."/css/tablet-style.css", null, false, false);
+		wp_enqueue_style("tourcms_mobile_css", $plugin_url."/css/mobile-style.css", null, false, false);
 	}
 
 	if (get_post_type($post->ID) == TOUR_CHECKOUT) {
+		
 		wp_register_script('checkout-js', $plugin_url.'/js/checkout.js', 'jquery');
 		wp_enqueue_script("checkout-js");
 
 		wp_enqueue_style("tourcms_checkout_css", $plugin_url."/css/checkout.css", null, false, false);
 		require_once(TOURCMS_ROOT.'/booking-engine/booking-engine.php');
 		require_once('lib/anet_php_sdk/AuthorizeNet.php');
+	} else {
+		wp_register_script('rate_calculation', $plugin_url.'/js/rate-calculation.js', array('jquery', 'sprintf', 'tourcms_adventure_js'), false, false);
+		wp_enqueue_script("rate_calculation");
+	
+		wp_register_script('tourcms_calendar', $plugin_url.'/js/calendar.js', array('jquery', 'sprintf', 'tourcms_adventure_js', 'rate_calculation'), false, false);
+		wp_enqueue_script("tourcms_calendar");
+	
+		wp_register_script('tourcms_booking_box', $plugin_url.'/js/booking-box.js', array('jquery', 'tourcms_calendar', 'tourcms_adventure_js'), false, false);
+		wp_enqueue_script("tourcms_booking_box");
+	
+		wp_register_script('tourcms_switchbox', $plugin_url.'/js/switchbox-tabs.js', array('jquery', 'tourcms_adventure_js'), false, false);
+		wp_enqueue_script("tourcms_switchbox");
+	
 	}
 	
 	wp_localize_script("tourcms_adventure_js", "ajax", array( 
-		'url' => admin_url( 'admin-ajax.php' ), 
+		'url' => admin_url( 'admin-ajax.php', 'https'), 
 		'action' => 'adventure_ajax_callback', 
 		'siteurl' => get_site_url(), 
 		'pluginurl' => plugins_url().'/tourcms-adventure/')
@@ -97,7 +101,7 @@ add_action('wp_enqueue_scripts', function() {
 	));
 
 	wp_localize_script("rate_calculation", "legal_promotions", array(
-		array('name' => 'Discovery Discount', 'code'=>'DISCOVERY7', 'type' => 'PERCENT', 'value' => 5)
+		//array('name' => 'Discovery Discount', 'code'=>'DISCOVERY7', 'type' => 'PERCENT', 'value' => 15)
 	));
 	
 	wp_localize_script("tourcms_adventure_js", "colors", array(
@@ -172,9 +176,6 @@ register_activation_hook(__FILE__, function() {
 
 function adventure_ajax_callback() {
 	$tourcms_helper = get_tourcms_helper();
-	//echo json_encode($_POST);
-	//exit;
-
 	call_user_func($_POST['callback'], $_POST);
 }
 

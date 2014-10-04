@@ -457,7 +457,7 @@ td.tourcms-sidebar-td, td.tourcms-sidebar-day {
 
 #sb-tour-spinning-loader {
 	position: absolute;
-	background: url('../img/spinning-loader.gif');
+	background: url('https://prideofmaui.com/wp-content/plugins/tourcms-adventure/img/spinning-loader.gif');
 	display: none;
 	width: 25px;
 	height: 25px;
@@ -828,7 +828,7 @@ tbody {
 }
 
 #modal {
-	position: fixed;
+	position: absolute;
 	width: 50%;
 	top: 0;
 	left: 0;
@@ -869,7 +869,6 @@ tbody {
 
 #modal-close {
     position:absolute;
-    background: url('x-mark.png');
 	width:24px;
     height:24px;
     display:block;

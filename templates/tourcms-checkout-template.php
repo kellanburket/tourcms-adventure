@@ -71,7 +71,7 @@ $sim = new AuthorizeNetSIM_Form(
 	'x_fp_hash'       	=> $fingerprint,
 	'x_fp_timestamp'  	=> $utc_timestamp,
 	'x_relay_response'	=> "TRUE",
-	'x_relay_url'     	=> $relay_response_url,
+	'x_relay_url'     	=> $relay_response_url . "?bust=" . uniqid(),
 	'x_login'         	=> $api_login
 	)
 );
@@ -88,6 +88,8 @@ $hidden_fields = $sim->getHiddenFieldString();
     <input type="hidden" name="user_id" value="<?php echo $user_id; ?>" id="user_id">
     <input type="hidden" name="referring_url" value="<?php echo $referer; ?>" id="referring_url">
 	<input type="hidden" name="test_mode" value="<?php echo $test_mode; ?>">
+	<input type="hidden" name="ip" value="<?php echo $_SERVER['REMOTE_ADDR']; ?>">
+
     <div id="checkout-wrap">
         <div id="checkout-main">
             <div id="checkout-div-1" class="checkout-div">
@@ -109,7 +111,7 @@ $hidden_fields = $sim->getHiddenFieldString();
                 <input type="text" name="x_last_name" id="surname" class="checkout-field" value="<?php echo $prefill ? 'User' : ''; ?>"> 
             
                 <label class="checkout-label">E-Mail</label>
-                <input type="text" name="x_email" id="email" class="checkout-field" value="<?php echo $prefill ? 'kellan@taglinegroup.com' : ''; ?>"> 
+                <input type="text" name="x_email" id="email" class="checkout-field" value="<?php echo $prefill ? 'locus.sulos@gmail.com' : ''; ?>"> 
             
                 <label class="checkout-label">Home Phone</label>
                 <input type="text" name="x_phone" id="tel_home" class="checkout-field" value="<?php echo $prefill ? '425-555-1212' : ''; ?>"> 
@@ -201,7 +203,7 @@ $hidden_fields = $sim->getHiddenFieldString();
                         <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                     <?php } ?>
                     </select>
-                    <input type="text" class="checkout-field checkout-field-exp" name="x_exp_date" readonly value="<?php echo ($prefill) ? '04/17' : ''; ?>"></input>
+                    <input type="text" style="background: none; border: none;" class="checkout-field checkout-field-exp" name="x_exp_date" readonly value="<?php echo ($prefill) ? '04/17' : ''; ?>"></input>
 				</div>
 
                 <label class="checkout-label">Security Code</label>

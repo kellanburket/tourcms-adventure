@@ -13,8 +13,28 @@
 
 	var tour_options = [];
 	var modal_options = [];
+	var user_id;
 
 	
+	function uniqid(num) {
+		
+		c = "";
+		for (i = 0; i < num; i++) {
+			c += String.fromCharCode(parseInt(Math.random() * (91 - 65) + 65));
+		}
+				
+	    var d = new Date(),
+	        m = d.getMilliseconds(),
+	        u = ++d + m;
+			id = c + u.toString(16);	        
+			
+
+		$("input[name=user_id]").val(id);	
+		//console.log("uniqid", id, $("input[name=user_id]").val());
+
+	    return id;
+	}
+
 	function Promo(name, type, value) {
 		this.name = name;
 		this.type = type;
@@ -46,7 +66,6 @@
 				return total_savings;
 			}
 		};
-		
 	}
 	
 	var promos = [];
@@ -135,18 +154,34 @@
 		this.kind = kind;
 		this.rate = rate;
 		this.number = 0;
-		
+		this.promos = {};
+
 		this.getTotal = function() {
 			return this.getRate() * this.number;
 		}
 		
 		this.getRate = function() {
-			//console.log("Option Rate", this.rate, sales_tax);
-			return this.rate; // /(1 + tour_pricing.sales_tax/100);
+		    var newRate = this.rate;
+			for(var i in this.promos) {
+				newRate -= ((this.promos[i].value / 100) * this.rate);    
+			}
+			//console.log("Getting Rate", newRate);
+
+			return newRate; // /(1 + tour_pricing.sales_tax/100);
+		}
+		
+		this.setPromo = function(name, promo) {
+			//console.log("in setPromo", name, promo);
+			if (!(name in this.promos)) {
+				this.promos[name] = promo;			
+				//console.log("Setting Promo", name);
+			} 
 		}
 	}
 						
 	$(document).ready(function() {
+		user_id = uniqid(4);
+
 		$('.sb-confirm-field').prop('disabled', true);
 		tour_id = booking_box_tour_id = $("input[name=tour_id]").val();
 	
@@ -157,7 +192,7 @@
 		});
 		
 		fetchRatesData(tour_id, function(rates) {
-			console.log('Done', rates);
+			//console.log('Done', rates);
 			tour_rates = rates;
 		});
 
@@ -167,32 +202,48 @@
 
 		$('#datepicker-select').change(function() {		
 			booking_box_tour_id = $('#datepicker-select option:selected').val();		
-			console.log('id', booking_box_tour_id);
+			//console.log('id', booking_box_tour_id);
 
 			fetchRatesData(booking_box_tour_id, function(rates) {
 				booking_box_tour_rates = rates;
 			});
 		});
 
-	
-		$('#promo-code-input').keypress(function(event) {
-	
+
+		$('#promo-code-input').on("paste", function(event) {
+			//console.log("Paste", event, $(this).val());		
+			var promo_code = $(this).val();			
+			//setTimeout($.proxy(checkPromoCode, null, promo_code), 100);
+		});
+
+		$('#promo-code-input').keydown(function(event) {
+			//console.log("Keydown", String.fromCharCode(event.which));
+						
 			var promo_code = $(this).val() + String.fromCharCode(event.which);
+			checkPromoCode(promo_code);
+		});
+		
+		function checkPromoCode(promo_code) {
 			var legal_codes = legal_promotions; 
-			//console.log(legal_codes);
 			for (var i = 0; i < legal_codes.length; i++) {
 				var reg = new RegExp('^' + legal_codes[i].code + '$', "i");
 				if (promo_code.match(reg)) {
-					//console.log('We have a match');
-					promos[legal_codes[i].name] = new Promo(legal_codes[i].name, legal_codes[i].type, legal_codes[i].value);
+					promos[legal_codes[i].name] = new Promo(legal_codes[i].code, legal_codes[i].type, legal_codes[i].value);
+					if (legal_codes[i].type == "PERCENT") {
+						for (var ii in tour_options) {
+							tour_options[ii].setPromo(legal_codes[i].name, promos[legal_codes[i].name]);
+						}
+					}
+
 					tour_rates = updateSavings(tour_rates, $('.sb-tour-option'), $('#tourcms-totals'));
 					$('#promo-code-input').css({backgroundColor: "#00FF00"});
 					$('#promo-code-input').attr('disabled', '');
 					$('#promo-code-input').val(legal_codes[i].code);
+					
 				}
 				
 			}
-		});
+		}
 		
 		$('.sb-confirm-field').click(function(event){
 			event.preventDefault();
@@ -212,7 +263,9 @@
 			var isItARealDate = date_regex.test(date_info);
 			
 			if (!isItARealDate) {
-				modal.displayContent(errors.date_error.message);
+				//modal.displayMessage(errors.date_error.message);
+				alert(errors.date_error.message);
+				console.log("Fail", "Not a real date");
 				return false;
 			}
 				
@@ -236,10 +289,10 @@
 				tour_id: $("input[name=tour_id]").val(),
 				promo_code: $('#promo-code-input').val(),
 				totals_string: totals_string,
-				user_id: $("input[name=user_id]").val()
+				user_id: user_id
 			};
 			
-			console.log(data);
+			//console.log(data);
 			
 			$.ajax(ajax.url, {
 				data: data, 
@@ -258,18 +311,24 @@
 						window.location = checkout_url;
 					}
 				} else if (data.success == false) {
-					modal.displayMessage(data.error_message);
+					//modal.displayMessage(data.error_message);
+					console.log("Fail", data);
+					alert(data.error_message);
 					$('#sb-submit').prop('disabled', false);
 					$('#sb-tour-spinning-loader').hide();
 					$('#sb-tour-submit-text').text(button_text);
 					//console.log("Error Message Trigger", data, data.error_message);
 				} else {
-					console.log(data);
+					alert("Sorry! There was a technical problem!");
+					//console.log(data);
 				}
-			}).fail(function(data) {
+			}).fail(function(xhr, msg, error) {
 				//console.log(data);
+				console.log('Fail', xhr.responseText, msg, error);
+
 				//alert(errors.server);
-				modal.displayMessage(data.error_message);
+				alert("Sorry! There was a technical problem!");
+				//modal.displayMessage(data.error_message);
 				$('#sb-submit').prop('disabled', false);
 				$('#sb-tour-spinning-loader').hide();
 				$('#sb-tour-submit-text').text(button_text);
@@ -291,7 +350,7 @@
 	
 			var num_adults = $('[name=datepicker_no_adults]').val();
 			var num_children = $('[name=datepicker_no_children]').val();
-			console.log("Number", num_adults, num_children);
+			//console.log("Number", num_adults, num_children);
 			booking_box_tour_rates[0].setNumber(num_adults);
 			
 			var booking_box_rates_data = [];
@@ -325,7 +384,7 @@
 					rates_data: booking_box_rates_data,
 					promo_code: $('#datepicker-promo-code-input').val(),
 					tour_name: $('#tour_name').val(),
-					user_id: $("input[name=user_id]").val(),
+					user_id: user_id,
 					totals_string: totals_string
 				}, function(data){
 					//console.log(data);
@@ -376,7 +435,7 @@
 								hotel: $('#hotel-field').val(),
 								room: $('#room-field').val(),
 								options_data: getOptionsData(modal_options),
-								user_id: $("input[name=user_id]").val(),
+								user_id: user_id,
 								totals_string: totals_string 
 							};
 							//console.log("Data", data);
@@ -396,27 +455,32 @@
 											//console.log(url);
 											window.location = url;
 										} else {
-											console.log(data);
+											alert("Sorry! There was a technical problem!");
+											//console.log(data);
 										}
 									}, 
 									dataType: 'json',
 									type: 'POST'									
 								}).fail(function(xhr, msg, error) {
-									console.log('Fail', xhr.responseText, msg, error);
+									alert("Sorry! There was a technical problem!");
+									//console.log('Fail', xhr.responseText, msg, error);
 								}).always(function(data) {
-									console.log('Always', data);
+									//console.log('Always', data);
 									document.body.style.cursor='default';			
 									$button.prop('disabled', false);
 								});
 							return false;
 						});
 					} else {
-						modal.displayMessage(data.error_message);
+						//modal.displayMessage(data.error_message);
+						alert(data.error_message);
+						//console.log("Fail", data);
 					}
 				},
 				'json'
 				).fail(function(data) {
-					console.log(data.responseText);
+					//console.log(data.responseText);
+					alert("Sorry! There was a technical problem!");
 					$(this).prop('disabled', false);
 				}).always(function(data) {
 					document.body.style.cursor='default';			
@@ -428,18 +492,18 @@
 	
 	function fetchRatesData(id, callback) {
 		tour_id = id || 1;
-		console.log('Fetch Rates Data', tour_id);
+		//console.log('Fetch Rates Data', ajax.url, ajax.action);
 
 		return $.post(ajax.url, {tour_id: tour_id, action: ajax.action, callback: 'fetch_rates_data'}, function(data) {
 			var rates = {};
-			console.log("Rates Data", data);
+			//console.log("Rates Data", data);
 			var childrenOK = false;
 			for (var i = 0; i < data.length; i++) {
 				if (data[i].kind == 'adults') {
 					rates[0] = new Rate(data[i].kind, data[i].rate);	
 					//booking_box_tour_rates[0] = new Rate(data[i].kind, data[i].rate);
 				} else if(data[i].kind == 'children') {
-					childrenOK = true
+					childrenOK = true;
 					rates[1] = new Rate(data[i].kind, data[i].rate);	
 					//booking_box_tour_rates[1] = new Rate(data[i].kind, data[i].rate);
 				} else {
@@ -466,11 +530,17 @@
 			init_cursor_events($('.sb-confirm-field'));
 			$('.sb-confirm-field').prop('disabled', false);
 			callback(rates);
-		}, "json");	
+		}, 
+		"json"
+		).fail(function(xhr) {
+			alert("Sorry! There was a technical problem!");
+
+			//console.log("Fail", xhr);
+		});	
 	}
 	
 	function get_rates_data() {
-		var data = new Array();
+		var data = [];
 		for (rate in tour_rates) {
 			data.push({kind: tour_rates[rate].kind, number: tour_rates[rate].number});
 		}
@@ -478,8 +548,7 @@
 	}
 	
 	function updateSavings(tour_rates, $options, $totals, is_modal) {
-		//console.log(tour_rates);
-		//console.log(tour_options);
+		//console.log("Update Savings");
 		total_guests = 0;
 		for (var i = 0; i < tour_rates.length; i++) {
 			total_guests += tour_rates[i].number;		
@@ -488,17 +557,21 @@
 		totals_string = updateTotals(tour_rates, $options, is_modal);
 		//console.log("Totals String", totals_string);
 		if ($totals) $totals.replaceWith(totals_string);
-			
+		//console.log("Promos", promos);
 		if (promos) {
 			var promo_savings = 0;
 			for (var property in promos) {
 				promo_savings += promos[property].getSavings(tour_rates, total_price);
-				//console.log(promos[property]);
 			}
+			//console.log("Savings", promo_savings);
+
 			if (promo_savings > 0 && $totals) {
-				$('#sb-tour-savings-box').show();
+				$('#sb-tour-savings-box').empty();
 				var savings_string = sprintf('You Saved $%1.2f on Your Booking!', promo_savings);
-				$('#sb-tour-you-saved-text').text(savings_string);			
+				
+				var $text = $('<p>', {id: 'sb-tour-you-saved-text', text: savings_string});
+				$('#sb-tour-savings-box').append($text);
+				$('#sb-tour-savings-box').show();
 			}
 		}
 		return tour_rates;
@@ -506,8 +579,7 @@
 	
 	function getOptionsData(objects) {
 		var options_data = [];
-		console.log("Options Data", objects);
-
+		
 		for(var prop in objects) {
 			options_data.push(
 				{
@@ -518,7 +590,6 @@
 				}
 			);
 		}
-		console.log("Options Data", options_data);
 		return options_data;
 	}
 	
@@ -641,7 +712,7 @@
 					}
 					break;
 				case(37):
-					console.log("KeyDown: " + key_down);
+					//console.log("KeyDown: " + key_down);
 					if (cntrl_down) {
 						cursor_pos = 0;
 					} else if (cursor_pos > 0) {

@@ -1,11 +1,11 @@
 <?php
 class AdminPageBuilder {
 
-	protected $menu_slug;	
-	protected $page_title;
-	protected $menu_title;
+	public $menu_slug;	
+	public $page_title;
+	public $menu_title;
 
-	protected $form_action;
+	public $form_action;
 	public $groups;
 	public $menu_url;
 	

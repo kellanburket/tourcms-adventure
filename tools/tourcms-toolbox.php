@@ -1,11 +1,27 @@
 <?php
 //Useful Functions to call via Javascript
 
+function log_tourcms_error() {
+	$helper = get_tourcms_helper();
+	$helper->log_error($_POST['type'], $_POST['message']);
+}
+
 function get_tourcms_helper() {
 	require_once(TOURCMS_HELPER);
 	$helper = 'wordpress_tourcms_helper';
 	return new $helper();
 }
+
+function serve_secure_image($url){
+	$url = str_replace("http://", "https://", $url, $count = 1);
+	$urlparts = explode('.', $url);
+	if (preg_match('/r\d+/', $urlparts[1])) {
+	  	$urlparts[1] = 'ssl';
+	  	$url = implode('.', $urlparts);
+  	}
+  	return($url);
+}
+
 
 function get_booking_fee_string($fee, $guests, $sales_tax) {
 
@@ -16,7 +32,7 @@ function get_booking_fee_string($fee, $guests, $sales_tax) {
 	} else if ($fee['type'] == 'PER_PERSON') {
 		$total_cost = floatval($fee['fee']) * floatval($guests); 
 		//((floatval($fee['fee']) * (floatval($sales_tax)/100)) + floatval($fee['fee'])) * floatval($guests); 
-		return sprintf('<span class="total-cost-label float-left">%s for %d guests at $%.2f per guest: </span><span class="total-cost-label float-right">$%.2f</span>', $fee['description'], intval($guests), floatval($fee['fee']), $total_cost);	
+		return sprintf('<span class="total-cost-label float-left">%s ($%.2f/guest): </span><span class="total-cost-label float-right">$%.2f</span>', $fee['description'], floatval($fee['fee']), $total_cost);	
 	} else {
 		return false;
 	}
@@ -65,14 +81,18 @@ function update_calendar($post) {
 	exit;
 }
 
-function fetch_rates_data($post) {
+function fetch_rates_data($post, $second_attempt = false) {
 	$id = ($_POST['tour_id']) ? intval($_POST['tour_id']) : 1;
-
 	$cache_file = dirname(__FILE__)."/cache/tour_{$id}.xml";	
 	if(get_tourcms_cache($cache_file, 1)) {
 		$tourcms = load_tourcms();
 		$tours = $tourcms->search_raw_departures($id, SiteConfig::get("channel_id"));
-		file_put_contents($cache_file, $tours->asXML());				
+		
+		$error = (string) $tours->error;
+		if ($error == 'OK')
+			file_put_contents($cache_file, $tours->asXML());
+		else
+			$tours = simplexml_load_file($cache_file);				
 	} else {
 		$tours = simplexml_load_file($cache_file);				
 	}
@@ -93,6 +113,10 @@ function fetch_rates_data($post) {
 	
 		echo json_encode($rates);
 		exit;
+	} else {
+		if (!$second_attempt)
+			fetch_tours_data(false, 1);
+			fetch_rates_data($_POST, true);
 	}
 }
 
@@ -154,9 +178,9 @@ function get_tourcms_cache($cache_file, $hours = 24) {
 	
 }
 
-function fetch_tours_data($print = true) {
+function fetch_tours_data($print = true, $hours = 1) {
 	$cache_file = dirname(__FILE__)."/cache/all_tours.json";
-	if(get_tourcms_cache($cache_file, 1)) {
+	if(get_tourcms_cache($cache_file, $hours)) {
 		$tourcms = load_tourcms(); 
 		
 		$channel_id = SiteConfig::get("channel_id");
@@ -177,6 +201,9 @@ function fetch_tours_data($print = true) {
 				$datum['from_price'] = (float) $next['from_price'];			
 				$datum['id'] = (int) $id;			
 				$datum['tour_name'] = $next['tour_name_long'];
+				$datum['image'] = serve_secure_image($next['images']['image']['url']);
+				$datum['description'] = $next['shortdesc'];
+				$datum['url'] = $next['tour_url'];				
 
 				$data[$id] = $datum;				
 			}

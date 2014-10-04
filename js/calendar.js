@@ -132,7 +132,6 @@
 	}
 	
 	function loadCalendar(calendar) {
-		//console.log("Loading Calendar " + calendar.calendar_id);
 		$.ajax({
 			url: ajax.url,
 			type: "POST",
@@ -170,7 +169,7 @@
 			//console.log(calendar);
 			
 		}).fail(function(data) {
-			alert(errors.server_error);
+			modal.displayMessage(errors.server_error);
 		});
 	}
 	
@@ -211,7 +210,7 @@
 			$('#' + calendar.month_id).text(calendar.getFullMonth() + " " + calendar.selected_year);
 			$('.' + calendar.day_clz).not(".unavailable").click($.proxy(date_handler.fire));
 		}).fail(function(data) {
-			alert(errors.access_error.message);
+			modal.displayMessage(errors.access_error.message);
 		}).always(function(data) {
 			/*
 			$('.calendar-overlay').animate({opacity: 0}, {duration: 1200, complete: function() {
@@ -260,13 +259,13 @@
 		tour = $("input[name=tour_id]").val() || 1;
 	
 		fetchToursData(function(data) {
-			console.log("Data Fetched", data);
+			//console.log("Data Fetched", data);
 			
 			var current_tour = data[tour]; 
 			for (var calendar in live_calendar) {
 				var id = live_calendar[calendar].table.id;
 				var date = current_tour.next_date.split("/");
-				console.log(date[0], date[2], tour);
+				//console.log(date[0], date[2], tour);
 	
 				calendars[id] = new Calendar(live_calendar[calendar], date[0], date[2], tour)
 				loadCalendar(calendars[id]);

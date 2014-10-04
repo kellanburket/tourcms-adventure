@@ -27,7 +27,7 @@ class TourcmsBookingEngine {
 	
 	private $rates;
 	public $total_customers;
-	
+	public $client_name;
 	public $order_completed;
 	
 	public function __construct($user_id) {
@@ -58,7 +58,15 @@ class TourcmsBookingEngine {
 		$this->nonce = $this->helper->create_nonce();
 	}
 
+	public function get_booking_id() {
+		if ($this->booking_id)
+			return $this->booking_id;
+		else
+			return $this->temp_booking_id;
+	}
+
 	private function return_message($message, $tourcms_message = '') {
+		$this->helper->log_error("booking_engine", "$message | $tourcms_message", $this->get_booking_id());
 		return json_encode(array('success'=>false, 'error_message'=>$message, 'tourcms_message'=>$tourcms_message));
 	}
 
@@ -77,7 +85,7 @@ class TourcmsBookingEngine {
 		}
 		
 		if (!$real_tour) {
-			return $this->return_message($this->invalid_tour_error); 
+			return $this->return_message($this->invalid_tour_error, "Not a real tour"); 
 		}
 
 		//Set all numerical
@@ -107,7 +115,7 @@ class TourcmsBookingEngine {
 		$year = $tour_date[2];
 		
 		if (!checkdate($month, $day, $year)) {
-			return $this->return_message($this->invalid_date_error); 
+			return $this->return_message($this->invalid_date_error, "Invalid Date"); 
 		}
 
 		$this->tour_date = $year.'-'.$month.'-'.$day;
@@ -129,7 +137,7 @@ class TourcmsBookingEngine {
 		$this->booking_key = file_get_contents($redirect_url);
 		
 		if ($this->booking_key == null) {
-			return $this->return_message($this->tourcms_technical_problem); 
+			return $this->return_message($this->tourcms_technical_problem, "invalid booking key"); 
 		}
 	
 		$booking->addChild('booking_key', $this->booking_key);
@@ -186,20 +194,21 @@ class TourcmsBookingEngine {
 	public function new_booking($booking, $tourcms, $channel_id) {
 		$result = $tourcms->start_new_booking($booking, $channel_id);
 		
-		$error = strip_tags($result->error->asXML());
-		if ($error == 'OK') {
-			$unavailable = strip_tags($result->unavailable_component_count->asXML());
+		$error = (string) $result->error;
+		
+		if ($error == "OK") {
+			$unavailable = (string) $result->unavailable_component_count;
 			
 			$this->booking = $booking->asXML();
-			$this->temp_booking_id = stripslashes(strip_tags($result->booking->booking_id->asXML()));
-			$this->total_amount = stripslashes(strip_tags($result->booking->sales_revenue->asXML()));
+			$this->temp_booking_id = (string) $result->booking->booking_id;
+			
+			$this->total_amount = (string) $result->booking->sales_revenue;
 
 			$this->booking_fee = array();			
 			$this->booking_fee['description'] = "Fuel Surcharge"; //(string) $result->booking->booking_fee->description;
 			$this->booking_fee['type'] = "PER_PERSON"; //(string) $result->booking->booking_fee->fee_type;
 			$this->booking_fee['fee'] = 4.00; //(float) $result->booking->booking_fee->fee;
 
-			
 			if ($unavailable == 0) {
 				$this->save_order();
 				return json_encode(array(
@@ -225,7 +234,8 @@ class TourcmsBookingEngine {
 			}
 
 		} else {
-			if ((string) $error == 'PLEASE ADD total_customers') {
+			$this->helper->log_error("tourcms", $result->asXML(), $this->get_booking_id());
+			if ($error == 'PLEASE ADD total_customers') {
 				return json_encode(array('success'=>false, 'error_message'=>$this->missing_customers_error));					
 			} else {
 				return json_encode(array('success'=>false, 'error_message'=>$this->tourcms_technical_problem, 'tourcms_error'=>$error));
@@ -251,6 +261,9 @@ class TourcmsBookingEngine {
 		$customer[0]->country = $this->validate_string($post['country']);
 		$customer[0]->tel_mobile = $this->validate_string($post['tel_mobile']);
 
+		$this->client_name = $post['firstname'] . " " . $post['surname'];
+
+
 		$final_booking = $tourcms->start_new_booking($booking, $channel_id);
 		$error = (string) $final_booking->error;
 		if ($error == "OK") {
@@ -267,11 +280,16 @@ class TourcmsBookingEngine {
 				"success"=>true, 
 				"debug"=>$this->debug, 
 				"user_id"=>$this->user_id, 
-				"booking_id"=>$this->final_booking_id
+				"booking_id"=>$this->final_booking_id,
+				"total"=>$this->total_amount
 			));
 	
 		} else {
-			return $this->return_message($this->tourcms_technical_problem, $error); 
+			$this->helper->log_error("tourcms", $result->asXML(), $this->get_booking_id());
+			return json_encode(array(
+				'error_message'=>$this->tourcms_technical_problem,
+				'error'=>$error,
+			)); 
 		}
 		
 	}

@@ -7,7 +7,7 @@ var modal = (function($){
 	$loader = $('');
 	$content = $('<div>', {id: "modal-content"});
 
-	$close = $('<a>', {id: "modal-close", href: "#"});
+	$close = $('<a>', {id: "modal-close", href: "#", text: "X"});
 
 	$OK = $('<button>', {text: 'OK', class: 'ok-button'});
 

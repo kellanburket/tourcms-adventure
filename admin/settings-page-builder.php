@@ -3,9 +3,9 @@ require_once(dirname(__FILE__).'/admin-page-builder.php');
 
 class SettingsPageBuilder extends AdminPageBuilder {
 
-	private $sections;
+	public $sections;
 	public $groups;
-	protected $options;
+	public $options;
 	
 	function __construct($menu) {
 		parent::__construct($menu);
@@ -17,9 +17,14 @@ class SettingsPageBuilder extends AdminPageBuilder {
 		add_action('whitelist_options', array($this, 'whitelist_custom_options_page'), 11);
 				
 		add_action('admin_init', function() use ($builder, $tabs) {
+			
 			foreach($tabs as $tab) {
-				$grouping = $this->menu_slug.'_'.$tab['settings_group'];
-				$group_url = $this->menu_slug; //.'&tab='.$tab['settings_group'];
+				//echo json_encode($builder);
+				//exit;
+				$grouping = $builder->menu_slug.'_'.$tab['settings_group'];
+	
+				$group_url = $builder->menu_slug; //.'&tab='.$tab['settings_group'];
+
 				$builder->groups[] = array(
 					'group'		=>	$grouping,
 					'section'	=> 	$group_url,
@@ -30,13 +35,13 @@ class SettingsPageBuilder extends AdminPageBuilder {
 				
 				foreach($tab['sections'] as $section) {
 					
-					//add_action('update_option', array($this, 'process_options'));
 					add_settings_section($section['id'], $section['title'], array($builder, 'add_section_header'), $grouping);
+
 					if( $section['id'] != $grouping ){
-						if( !isset($this->sections[$grouping])) {
-							$this->sections[$grouping] = array();
+						
+						if( !isset($builder->sections[$grouping])) {
+							$builder->sections[$grouping] = array();
 						}
-						//$this->sections[$grouping][] = $id;
 					}
 					
 					
@@ -45,7 +50,7 @@ class SettingsPageBuilder extends AdminPageBuilder {
 						//$field['attributes']['name'] = $grouping.'['.$field['name'].']';
 						$field_label = $field['label'];
 						$field_id = $field['attributes']['name'];
-						$this->sections[$grouping][] = $field_id;
+						$builder->sections[$grouping][] = $field_id;
 						$builder->options[] = $field_id; 
 						add_settings_field($field_id, $field_label, array($builder, 'add_field'), $grouping, $section['id'], $field);  
 						
@@ -64,6 +69,7 @@ class SettingsPageBuilder extends AdminPageBuilder {
 					}
 				}
 			}
+			
 		});
 	}
 		

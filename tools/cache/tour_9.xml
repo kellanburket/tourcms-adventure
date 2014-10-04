@@ -19,7 +19,8 @@
 <end_date>2014-12-31</end_date>
 <start_time>21:45</start_time>
 <end_time>01:15</end_time><note/>
-<spaces_remaining>29</spaces_remaining>
+<supplier_note/>
+<spaces_remaining>41</spaces_remaining>
 <min_booking_size>1</min_booking_size>
 <status>OPEN</status>
 <auto_status>OPEN</auto_status>
@@ -27,7 +28,7 @@
 <calc_quotation>0</calc_quotation>
 <calc_provisional>0</calc_provisional>
 <calc_confirmed>0</calc_confirmed>
-<spaces_blocked>71</spaces_blocked>
+<spaces_blocked>59</spaces_blocked>
 
 <special_offer>
 <is_offer>0</is_offer>

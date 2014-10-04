@@ -110,10 +110,10 @@ class TourcmsSidebarWidget extends WP_Widget {
 	
 		$args = array(
 			'tour_id' => $tour_id,
-			'user' => uniqid(),
+			'user' => uniqid(mt_rand(5000)),
 			'display_month' => $this->get_display_month(),
 			'rates' => $this->get_rates($tour->new_booking->people_selection->rate, $tour->options->option),			
-			'tour_name'=> $tour->tour_name_long,
+			'tour_name'=> $tour->tour_name_long
 		);
 		
 		if ($tour->options->option) {
@@ -122,7 +122,7 @@ class TourcmsSidebarWidget extends WP_Widget {
 		
 			
 		
-		wp_enqueue_style("choose_your_adventure_mobile_css", $plugin_url."/css/mobile-style.css", null, false, false);
+		//wp_enqueue_style("choose_your_adventure_mobile_css", $plugin_url."/css/mobile-style.css", null, false, false);
 
 		
 		
@@ -163,7 +163,7 @@ class TourcmsSidebarWidget extends WP_Widget {
 	
 	public function get_tablet_booking_elements($description, $image, $switcher) {
 		$elements = '<div id="tablet-booking-elements">
-            <img class="sb-tour-thumbnail" src="'.$image.'">
+            <img class="sb-tour-thumbnail" src="'.serve_secure_image($image).'">
 			<p class="sb-tour-description">'.$description.'</p>';
 		$elements .= $switcher;
 		$elements .= '</div>';
@@ -183,12 +183,14 @@ class TourcmsSidebarWidget extends WP_Widget {
 	public function get_rates($rates, $options = 0) {
 		
 		$return = '';
-		foreach($rates as $rate) {
-			$return .= '<div class="sb-tour-rates" id="'.$rate->label_1.'">';
-  			$return .= '<p class="sb-tour-guests-label">'.$rate->label_1;
-			$return .= ($rate->label_2) ? ' '.$rate->label_2.'</p>' : '</p>';
-			$return .= '<input type="number" min="0" name="no_'.strtolower($rate->label_1).'" class="sb-guests-input sb-confirm-field" data-category="rate" data-kind="'.$rate->label_1.'" />';
-        	$return .= '</div>';  
+		if ($rates instanceof Traversable) {
+			foreach($rates as $rate) {
+				$return .= '<div class="sb-tour-rates" id="'.$rate->label_1.'">';
+  				$return .= '<p class="sb-tour-guests-label">'.$rate->label_1;
+				$return .= ($rate->label_2) ? ' '.$rate->label_2.'</p>' : '</p>';
+				$return .= '<input type="number" min="0" name="no_'.strtolower($rate->label_1).'" class="sb-guests-input sb-confirm-field" data-category="rate" data-kind="'.$rate->label_1.'" />';
+        		$return .= '</div>';  
+			}
 		}
 		
 		if ($options) {
