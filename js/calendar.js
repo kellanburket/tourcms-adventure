@@ -168,8 +168,9 @@
 			
 			//console.log(calendar);
 			
-		}).fail(function(data) {
-			modal.displayMessage(errors.server_error);
+		}).fail(function(xhr) {
+			//log_tourcms_error("calendar_error", xhr.responseText);
+			//modal.displayMessage("Calendar could not be displayed");
 		});
 	}
 	
@@ -263,6 +264,7 @@
 			
 			var current_tour = data[tour]; 
 			for (var calendar in live_calendar) {
+				console.log("Current Tour", data, tour);
 				var id = live_calendar[calendar].table.id;
 				var date = current_tour.next_date.split("/");
 				//console.log(date[0], date[2], tour);

@@ -20,15 +20,15 @@
 <start_time>16:30</start_time>
 <end_time>22:30</end_time><note/>
 <supplier_note/>
-<spaces_remaining>64</spaces_remaining>
+<spaces_remaining>0</spaces_remaining>
 <min_booking_size>1</min_booking_size>
-<status>OPEN</status>
-<auto_status>OPEN</auto_status>
+<status>CLOSED</status>
+<auto_status>CLOSED</auto_status>
 <manually_closed>0</manually_closed>
 <calc_quotation>0</calc_quotation>
 <calc_provisional>0</calc_provisional>
-<calc_confirmed>11</calc_confirmed>
-<spaces_blocked>25</spaces_blocked>
+<calc_confirmed>32</calc_confirmed>
+<spaces_blocked>100</spaces_blocked>
 
 <special_offer>
 <is_offer>0</is_offer>
@@ -39,6 +39,7 @@
 <rate>
 <rate_id>r1</rate_id>
 <rate_name>Adults</rate_name>
+<agecat>a</agecat>
 <customer_price>109.95</customer_price>
 <customer_price_display>US&amp;#36;109</customer_price_display>
 <supplier_cost>0.00</supplier_cost>

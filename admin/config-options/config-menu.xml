@@ -310,6 +310,24 @@
 				</section>
 			</sections>
 		</tab>		
+		<tab>
+			<title>Tour Order</title>
+			<settings_group>tour_order</settings_group>
+			<sections type="array">
+				<section>
+					<id>tour_config</id>
+					<title>Tour Order</title>
+					<fields type="array">
+						<field>
+							<call_user_func>do_tour_order</call_user_func>
+							<attributes>
+								<name>tourcms_order</name>
+							</attributes>
+						</field>										
+					</fields>
+				</section>
+			</sections>
+		</tab>
 	</tabs>
 	<submit_value>Submit</submit_value>
 </menu>

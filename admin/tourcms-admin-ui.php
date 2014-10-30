@@ -53,6 +53,7 @@ add_filter('title_save_pre', function($post_title) {
 		if (($post->post_type == TOUR_PAGE || $post->post_type == MOBILE_TOUR_PAGE)) {
 			$tour_id = isset($_POST['tour_id']) ? $_POST['tour_id'] : '';
 			if ($tour_id) {
+
 				$tourcms = new TourCMS();
 				$channel_id = SiteConfig::get('channel_id');
 				$tour_id = sanitize_text_field($tour_id);
@@ -64,8 +65,38 @@ add_filter('title_save_pre', function($post_title) {
 						return (string) $tour->tour->tour_name_long;
 					}
 				}
+
 			}
 		} 
 	}
 	return $post_title;	
 });
+
+function do_tour_order() {
+	$data = fetch_tours_data(false);
+	$i = 0;	
+	$tour_order = "";
+	$order = get_option('tourcms_order');
+	
+	if (is_array($data)) {	
+		if ($order) {
+			$tour_order = json_decode($order, true);			
+			echo "<input type='hidden' name='tourcms_order' value='".$order."'>";
+		} else {
+			$tour_order = array_keys($data);				
+			echo "<input type='hidden' name='tourcms_order' value='".json_encode($tour_order)."'>";
+		}		
+
+
+		foreach($tour_order['visible'] as $tour_id) {
+			++$i;
+			echo "<tr class='tour' data-order='$i' data-tour_id='$tour_id'><td>$i.</td><td>{$data[$tour_id]['tour_name']}</td><td><span class='fa fa-arrow-up' style='cursor: pointer'></span></td><td><span class='fa fa-arrow-down' style='cursor: pointer'></span></td><td><input type='checkbox' class='show-tour' checked='checked'></td></tr>";
+		}	
+
+		foreach($tour_order['invisible'] as $tour_id) {
+			echo "<tr class='tour' data-order='' data-tour_id='$tour_id'><td></td><td>{$data[$tour_id]['tour_name']}</td><td><span class='fa fa-arrow-up' style='cursor: pointer'></span></td><td><span class='fa fa-arrow-down' style='cursor: pointer'></span></td><td><input type='checkbox' class='show-tour'></td></tr>";
+		}	
+
+
+	}
+}

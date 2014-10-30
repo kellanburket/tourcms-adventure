@@ -94,61 +94,65 @@ class SettingsPageBuilder extends AdminPageBuilder {
 	}
 
 	function add_field($field) {
-		$echo = '<'.$field['tag'].' '; 
-		//$echo .= 'id="'.$field['attributes']['name'].'" ';
-		
-		if (!$field['attributes']['class']) {
-			$field['attributes']['class'] = $this->field_class;
-		}
-		
-		if ($field['tag'] == 'select') {
-			foreach ($field['attributes'] as $attr => $value) {
-				$echo .= $attr.'="'.$value.'" ';
-			}
-			$echo .= '>';
-
-			$value = $field['options']['return']['key'];
-			$text = $field['options']['return']['value'];			
-			$options = call_user_func_array($field['options']['function'], $field['options']['params']);			
-				
-			if ($field['options']['return']['type'] == 'object') {
-				foreach ($options as $option) {
-					$echo .= '<option value="'.$option->$value.'">'.$option->$text.'</option>';
-				}
-			} else if ($field['options']['return']['type'] == 'array') {
-				foreach ($options as $option) {
-					$echo .= '<option value="'.$option[$value].'">'.$option[$text].'</option>';
-				}
+		if (array_key_exists('tag', $field)) {
+			$echo = '<'.$field['tag'].' '; 
+			//$echo .= 'id="'.$field['attributes']['name'].'" ';
+			
+			if (!$field['attributes']['class']) {
+				$field['attributes']['class'] = $this->field_class;
 			}
 			
-			$echo .= '</select>';	
-		} elseif ($field['tag'] == 'fieldset') {
-			foreach($field['fields'] as $f) {
-				$this->add_field($f);			
-			}
-		} else {
-			if ($field['attributes']['type'] == 'checkbox') {
-				$echo .= (get_option($field['attributes']['name']) == 1) ? 'checked ' : '';				
-				$field['value'] = 1;//(get_option($field['attributes']['name']) == 1) ? 0 : 1;
-			} elseif (!isset($field['value'])) {
-				$field['value'] = get_option($field['attributes']['name']);						
-			}
-			
-			//Set attributes
-			if(@ is_array($field['attributes'])) {
-				foreach (@ $field['attributes'] as $attr => $v) {
-					$echo .= $attr.'="'.$v.'" ';
+			if ($field['tag'] == 'select') {
+				foreach ($field['attributes'] as $attr => $value) {
+					$echo .= $attr.'="'.$value.'" ';
 				}
-			}
+				$echo .= '>';
+	
+				$value = $field['options']['return']['key'];
+				$text = $field['options']['return']['value'];			
+				$options = call_user_func_array($field['options']['function'], $field['options']['params']);			
+					
+				if ($field['options']['return']['type'] == 'object') {
+					foreach ($options as $option) {
+						$echo .= '<option value="'.$option->$value.'">'.$option->$text.'</option>';
+					}
+				} else if ($field['options']['return']['type'] == 'array') {
+					foreach ($options as $option) {
+						$echo .= '<option value="'.$option[$value].'">'.$option[$text].'</option>';
+					}
+				}
 				
-			//set value
-			if ($field['tag'] == 'textarea') {
-				$echo .= '>'.$field['value'].'</textarea>';
+				$echo .= '</select>';	
+			} elseif ($field['tag'] == 'fieldset') {
+				foreach($field['fields'] as $f) {
+					$this->add_field($f);			
+				}
 			} else {
-				$echo .= 'value="'.$field['value'].'"/>';
+				if ($field['attributes']['type'] == 'checkbox') {
+					$echo .= (get_option($field['attributes']['name']) == 1) ? 'checked ' : '';				
+					$field['value'] = 1;//(get_option($field['attributes']['name']) == 1) ? 0 : 1;
+				} elseif (!isset($field['value'])) {
+					$field['value'] = get_option($field['attributes']['name']);						
+				}
+				
+				//Set attributes
+				if(@ is_array($field['attributes'])) {
+					foreach (@ $field['attributes'] as $attr => $v) {
+						$echo .= $attr.'="'.$v.'" ';
+					}
+				}
+					
+				//set value
+				if ($field['tag'] == 'textarea') {
+					$echo .= '>'.$field['value'].'</textarea>';
+				} else {
+					$echo .= 'value="'.$field['value'].'"/>';
+				}
 			}
+			echo $echo;
+		} else if (array_key_exists('call_user_func', $field)) {
+			call_user_func($field['call_user_func']);
 		}
-		echo $echo;
 	}
 		
 	function display_group($group, $section, $note) {

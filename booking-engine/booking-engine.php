@@ -66,7 +66,7 @@ class TourcmsBookingEngine {
 	}
 
 	private function return_message($message, $tourcms_message = '') {
-		$this->helper->log_error("booking_engine", "$message | $tourcms_message", $this->get_booking_id());
+		$this->helper->log_error("booking_engine", "Message: $message | Tourcms Message: $tourcms_message", $this->get_booking_id());
 		return json_encode(array('success'=>false, 'error_message'=>$message, 'tourcms_message'=>$tourcms_message));
 	}
 
@@ -99,6 +99,10 @@ class TourcmsBookingEngine {
 			@ $rates_data[$i]['total'] = floatval($rates_data[$i]['total']);
 			@ $rates_data[$i]['rate'] = floatval($rates_data[$i]['rate']);
 			@ $this->total_customers += intval($rates_data[$i]['number']);
+		}
+		
+		if ($this->total_customers <= 0) {
+			return $this->return_message("Please enter a valid number of travelers.", "Zero travelers selected"); 		
 		}
 		
 		$this->rates = $rates_data;
@@ -197,7 +201,7 @@ class TourcmsBookingEngine {
 		$error = (string) $result->error;
 		
 		if ($error == "OK") {
-			$unavailable = (string) $result->unavailable_component_count;
+			$unavailable = (int) $result->unavailable_component_count;
 			
 			$this->booking = $booking->asXML();
 			$this->temp_booking_id = (string) $result->booking->booking_id;
@@ -219,12 +223,14 @@ class TourcmsBookingEngine {
 					'checkout_url'=>$this->checkout_url			
 				));
 			} elseif ($unavailable > 0) {
+				$this->helper->log_error("booking", "No Available Components: $unavailable", $this->get_booking_id());
 				return json_encode(array(
 					'success'=>false, 
 					'unavailable_components'=>$unavailable, 
 					'error_message'=>$this->no_availabilities_error, 
 					'tourcms_error'=>$error));
 			} else {
+				$this->helper->log_error("booking", "No Available Components: $unavailable", $this->get_booking_id());
 				return json_encode(array(
 					'success'=> false,
 					'debug'=> true,

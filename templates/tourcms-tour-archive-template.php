@@ -25,20 +25,21 @@ $data = $tourcms->search_tours($args, $channel_id);
 $tours = $data->tour;
 */
 $tours = fetch_tours_data(false, 24);
+$order = json_decode(get_option('tourcms_order'), true);
 ?>
 
 <?php get_header(); ?>
 <h1 class="tour-archive-h1">Available Tours</h1>	
 	<?php //print_r($tours); ?>        
-	<?php foreach($tours as $tour) { ?>
+	<?php foreach($order['visible'] as $tour_id) { ?>
     <div class="tour-archive-wrapper">		
-        <h3 class="tour-archive-h3"><a href="<?php echo $tour['url']; ?>"><?php echo $tour['tour_name']; ?></a></h3>
+        <h3 class="tour-archive-h3"><a href="<?php echo $tours[$tour_id]['url']; ?>"><?php echo $tours[$tour_id]['tour_name']; ?></a></h3>
         <div class="tour-archive-thumbnail">
-            <img src="<?php echo $tour['image']; ?>" class="tour-archive-image">
+            <img src="<?php echo $tours[$tour_id]['image']; ?>" class="tour-archive-image">
         </div>
 		<div class="tour-archive-description">
-            <p><?php echo $tour['description']; ?></p>
-            <a href="<?php echo $tour['url']; ?>"><button class="tour-archive-book-now">Book Now</button></a>	
+            <p><?php echo $tours[$tour_id]['description']; ?></p>
+            <a href="<?php echo $tours[$tour_id]['url']; ?>"><button class="tour-archive-book-now">Book Now</button></a>	
         </div>
 	</div>
 	<?php } ?>

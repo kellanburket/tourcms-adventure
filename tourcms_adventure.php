@@ -26,21 +26,21 @@ add_action('widgets_init', function() {
 	register_widget('TourcmsBookingBoxWidget');	
 });
 
+add_action('admin_enqueue_scripts', function() {
+	wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
+});
+
 add_action('wp_enqueue_scripts', function() {
 	global $post;
 	$plugin_url = plugins_url().'/tourcms-adventure';
 
-	//wp_enqueue_script("firebug-lite", "https://getfirebug.com/firebug-lite.js");
-
 	wp_register_script("sprintf", $plugin_url.'/js/sprintf.js', array(), false, false);
 	wp_enqueue_script("sprintf");
-	wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
 
 	wp_register_script("tourcms_adventure_js", $plugin_url.'/js/adventure.js', array('jquery', 'sprintf'), false, false);	
 	wp_enqueue_script("tourcms_adventure_js");
-	
-	wp_register_script("tourcms_modal", $plugin_url.'/js/modal.js', array('jquery', 'tourcms_adventure_js'), false, false);	
-	wp_enqueue_script("tourcms_modal");
+
+	wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
 			
 	//register fonts
 	wp_register_style('openSans', 'http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600,800,700');
@@ -50,40 +50,51 @@ add_action('wp_enqueue_scripts', function() {
 	
 	wp_enqueue_style("choose_your_adventure_css", $plugin_url."/css/adventure-style.css", null, false, false);
 
-	
-	if(get_post_type() == MOBILE_TOUR_PAGE || get_post_type() == TOUR_PAGE) {
-		//TODO--move this back to main page
-		
-		
-	}
-	
-	if(get_post_type() == MOBILE_TOUR_PAGE) {
-		wp_enqueue_style("tourcms_tablet_css", $plugin_url."/css/tablet-style.css", null, false, false);
-		wp_enqueue_style("tourcms_mobile_css", $plugin_url."/css/mobile-style.css", null, false, false);
-	}
+	//wp_register_script("tourcms_modal", $plugin_url.'/js/modal.js', array('jquery', 'tourcms_adventure_js'), false, false);	
+	//wp_enqueue_script("tourcms_modal");
+
+	//wp_register_script('tourcms_booking_box', $plugin_url.'/js/booking-box.js', array('jquery', 'tourcms_calendar', 'tourcms_adventure_js'), false, false);
+	//wp_enqueue_script("tourcms_booking_box");	
 
 	if (get_post_type($post->ID) == TOUR_CHECKOUT) {
-		
-		wp_register_script('checkout-js', $plugin_url.'/js/checkout.js', 'jquery');
+		wp_register_script('checkout-js', $plugin_url.'/js/checkout.js', array('jquery', 'tourcms_adventure_js'));
 		wp_enqueue_script("checkout-js");
 
 		wp_enqueue_style("tourcms_checkout_css", $plugin_url."/css/checkout.css", null, false, false);
 		require_once(TOURCMS_ROOT.'/booking-engine/booking-engine.php');
 		require_once('lib/anet_php_sdk/AuthorizeNet.php');
-	} else {
+
+	} else if (get_post_type() == TOUR_PAGE || get_post_type() == MOBILE_TOUR_PAGE) {
+		
 		wp_register_script('rate_calculation', $plugin_url.'/js/rate-calculation.js', array('jquery', 'sprintf', 'tourcms_adventure_js'), false, false);
 		wp_enqueue_script("rate_calculation");
 	
 		wp_register_script('tourcms_calendar', $plugin_url.'/js/calendar.js', array('jquery', 'sprintf', 'tourcms_adventure_js', 'rate_calculation'), false, false);
 		wp_enqueue_script("tourcms_calendar");
 	
-		wp_register_script('tourcms_booking_box', $plugin_url.'/js/booking-box.js', array('jquery', 'tourcms_calendar', 'tourcms_adventure_js'), false, false);
-		wp_enqueue_script("tourcms_booking_box");
+		wp_localize_script("rate_calculation", "tour_pricing", array( 
+			'sales_tax'=> get_option('tourcms_sales_tax'))
+		);
+		
+		wp_localize_script("rate_calculation", "promotions", array(
+			array('name' => 'Internet Discount', 'type' => 'REDUCTION', 'value' => 10)
+		));
 	
+		wp_localize_script("rate_calculation", "legal_promotions", array(
+			//array('name' => 'Discovery Discount', 'code'=>'DISCOVERY7', 'type' => 'PERCENT', 'value' => 15)
+		));
+
+	}
+		
+	if(get_post_type() == MOBILE_TOUR_PAGE) {
+		wp_enqueue_style("tourcms_tablet_css", $plugin_url."/css/tablet-style.css", null, false, false);
+		wp_enqueue_style("tourcms_mobile_css", $plugin_url."/css/mobile-style.css", null, false, false);
+		
 		wp_register_script('tourcms_switchbox', $plugin_url.'/js/switchbox-tabs.js', array('jquery', 'tourcms_adventure_js'), false, false);
 		wp_enqueue_script("tourcms_switchbox");
-	
+
 	}
+
 	
 	wp_localize_script("tourcms_adventure_js", "ajax", array( 
 		'url' => admin_url( 'admin-ajax.php', 'https'), 
@@ -91,19 +102,7 @@ add_action('wp_enqueue_scripts', function() {
 		'siteurl' => get_site_url(), 
 		'pluginurl' => plugins_url().'/tourcms-adventure/')
 	);
-	
-	wp_localize_script("rate_calculation", "tour_pricing", array( 
-		'sales_tax'=> get_option('tourcms_sales_tax'))
-	);
-	
-	wp_localize_script("rate_calculation", "promotions", array(
-		array('name' => 'Internet Discount', 'type' => 'REDUCTION', 'value' => 10)
-	));
-
-	wp_localize_script("rate_calculation", "legal_promotions", array(
-		//array('name' => 'Discovery Discount', 'code'=>'DISCOVERY7', 'type' => 'PERCENT', 'value' => 15)
-	));
-	
+		
 	wp_localize_script("tourcms_adventure_js", "colors", array(
 		'tablet' => array(
 			'tab_inactive'=>array('backgroundColor' => '#ffffff', 'color' => '#777777'),

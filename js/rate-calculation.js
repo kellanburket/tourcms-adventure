@@ -255,9 +255,14 @@
 	
 		});
 	
-		$('#sb-submit').click(function(event){
+		$('#sb-submit').on("click", function(event){
+			console.log("Event.Target : this", event.target, this);
+
 			event.preventDefault();
 			event.stopPropagation();		
+
+
+
 			var date_regex = /[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}/;
 			var date_info = $('#sb-tour-activity-date-field').val();
 			var isItARealDate = date_regex.test(date_info);
@@ -265,11 +270,21 @@
 			if (!isItARealDate) {
 				//modal.displayMessage(errors.date_error.message);
 				alert(errors.date_error.message);
-				console.log("Fail", "Not a real date");
+				log_tourcms_error("rates.js(268)", "Customer Did Not Enter a Valid Date");				
 				return false;
 			}
-				
-			
+							
+			var json_rates_data = get_rates_data(tour_rates);
+			console.log("rates data", json_rates_data);
+
+			if (!json_rates_data) {
+				//modal.displayMessage(errors.date_error.message);
+				alert("Please enter a valid number of travelers!");
+				log_tourcms_error("rates.js(283)", "Customer Did Not Enter a Valid Number of Travelers.");				
+				return false;
+			}
+
+
 			document.body.style.cursor='wait';
 			$('#sb-tour-spinning-loader').show();
 			var button_text = $('#sb-tour-submit-text').text();
@@ -278,13 +293,14 @@
 			
 			var options_data = getOptionsData(tour_options);
 			nonce = $('[name=_tourcms_sidebar_nonce]').val();
+
 			
 			var data = {
 				action: ajax.action,
 				sales_tax: sales_tax,
 				callback: "start_booking_engine",
 				options_data: options_data,
-				rates_data: get_rates_data(tour_rates),
+				rates_data: json_rates_data,
 				tour_date: date_info,
 				tour_id: $("input[name=tour_id]").val(),
 				promo_code: $('#promo-code-input').val(),
@@ -319,13 +335,13 @@
 					$('#sb-tour-submit-text').text(button_text);
 					//console.log("Error Message Trigger", data, data.error_message);
 				} else {
+					log_tourcms_error("rates.js(322)", "DONE: Could not submit sidebar form: " + JSON.stringify(data));								
 					alert("Sorry! There was a technical problem!");
 					//console.log(data);
 				}
 			}).fail(function(xhr, msg, error) {
 				//console.log(data);
-				console.log('Fail', xhr.responseText, msg, error);
-
+				log_tourcms_error("rates.js(330)", "FAIL: Could not submit sidebar form: " + xhr.responseText + "; " + msg + "; " + error);
 				//alert(errors.server);
 				alert("Sorry! There was a technical problem!");
 				//modal.displayMessage(data.error_message);
@@ -337,7 +353,7 @@
 				document.body.style.cursor='default';
 			});
 		});
-			
+		/*		
 		$('#datepicker-submit').click(function(event) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -394,22 +410,6 @@
 								content: data.html,
 							}
 						);
-						/*				
-						$('.confirm-field').keydown(function() {
-							console.log("Confirm Keydown");
-							//$(this).hide().show();
-							//$(this).offset().top; //force redraw
-							//$('#modal').offset().top;
-							//forceRedraw(document.getElementById('modal'));
-						});
-						$('.confirm-field').focus(function() {
-							console.log("Confirm Focus");
-							//$(this).hide().show();
-							//$(this).offset().top; //force redraw
-							//$('#modal').offset().top;
-							//forceRedraw(document.getElementById('overlay'));
-						});
-						*/
 						
 						$('#confirm-booking').click(function(event){
 							event.preventDefault();
@@ -487,7 +487,7 @@
 				});
 			}
 		});
-		
+		*/	
 	});
 	
 	function fetchRatesData(id, callback) {
@@ -511,6 +511,8 @@
 				}
 
 			}
+
+			/*
 			$dp_children = $('#datepicker-children');
 			if (childrenOK) {
 				if (!$dp_children.is(':visible')) {
@@ -527,24 +529,32 @@
 			//console.log("Booking Box Tour Rates", booking_box_tour_rates);
 			
 			$('#datepicker-submit').removeAttr('disabled');
+			*/
 			init_cursor_events($('.sb-confirm-field'));
 			$('.sb-confirm-field').prop('disabled', false);
 			callback(rates);
 		}, 
 		"json"
 		).fail(function(xhr) {
-			alert("Sorry! There was a technical problem!");
-
+			//alert("Sorry! There was a technical problem!");
 			//console.log("Fail", xhr);
 		});	
 	}
 	
 	function get_rates_data() {
+		var hasData = false;
 		var data = [];
 		for (rate in tour_rates) {
 			data.push({kind: tour_rates[rate].kind, number: tour_rates[rate].number});
+			if (tour_rates[rate].number > 0) {
+				hasData = true;
+			}
 		}
-		return data;
+
+		if (hasData)
+			return data;
+		else
+			return false;
 	}
 	
 	function updateSavings(tour_rates, $options, $totals, is_modal) {
