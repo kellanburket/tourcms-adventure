@@ -28,26 +28,65 @@ Template Name: Content
 		$zeitgeist_activate_sidebar="on";
 	} else { $zeitgeist_activate_sidebar="off"; }
 
+	if (!function_exists('str_lreplace')) {
+		function str_lreplace($search, $replace, $subject) {
+			$pos = strrpos($subject, $search);
+
+			if($pos !== false)
+			{
+				$subject = substr_replace($subject, $replace, $pos, strlen($search));
+			}
+
+			return $subject;
+		}	
+	}
 	get_header(); 
 ?>
 <style type="text/css">
 	.vision_two_thirds {  }
 	.one_third_lastcolumn { width: 33%; float: right; margin-right: 1.5%; }
 	#sb-tour-widget-wrap { width: 100%; }
+	.embed-container.prepended { display: none; }
 	@media only screen and (max-width: 979px) {
 		.dummyMargin { margin-right: 0 !important; }
 		.vision_two_thirds,
 		.one_third_lastcolumn { float: none; margin: 0; }
 		.vision_two_thirds { width: 100%; }
 		.one_third_lastcolumn { width: 70%; margin: 50px auto 0 auto; }
+		
+.single-tourcms #sb-tour-widget-wrap { margin-bottom: 30px; }
+.single-tourcms .container .row .span12 .vision_two_thirds .embed-container.first { display: none; }
+.embed-container.prepended { display: block; }	
 	}
 	@media only screen and (max-width: 640px) {
 		.vision_two_thirds,
 		.one_third_lastcolumn { float: none; margin: 0; }
 		.vision_two_thirds { width: 100%; }
 		.one_third_lastcolumn { width: 100%; margin: 30px auto 0 auto; }
-	}	
+	}
 </style>
+<script>
+	jQuery(function ($)
+	{
+		var $vid = $(".single-tourcms .container .row .span12 .vision_two_thirds .embed-container:first").addClass("first").clone().addClass("prepended");
+		$(".single-tourcms .container .row .span12:first > .subtitle").after($vid);
+		// var $dummyMargin = $(".single-tourcms .container .row .span12 .vision_two_thirds .dummyMargin");
+		// var $fChild = $dummyMargin.find(">:first-child");
+		// if ($fChild.hasClass("jwplayer"))
+		// {
+			// $(window).load(function ()
+			// {
+				// var $vid = $fChild.addClass("custVideo first").clone().addClass("prepended");
+				// $(".single-tourcms .container .row .span12:first > .subtitle").after($vid);	
+			// });
+		// }
+		// else if ($fChild.hasClass("embed-container"))
+		// {
+			// var $vid = $fChild.addClass("custVideo first").clone().addClass("prepended");
+			// $(".single-tourcms .container .row .span12:first > .subtitle").after($vid);	
+		// }		
+	});
+</script>
 
 		<!--
 		########################################
@@ -81,16 +120,24 @@ Template Name: Content
 			$subtitle = get_post_meta(get_the_id(), 'subtitle', true); ?>	
         <div class="span12">
         
-            <div style="text-align: center; margin-bottom: 50px;" align="center">
+            <div style="text-align: center; margin-bottom: 50px;" align="center" class="subtitle">
             	<span style="font-size: x-large;" data-mce-mark="1"><b><?php echo $subtitle; ?></b></span>
+            </div>
+            <div class="one_third_lastcolumn">
+				<?php
+					global $post;
+					ob_start();
+					dynamic_sidebar('tour-sidebar');
+					$sidebar = ob_get_clean();
+					$tour_id = get_post_meta($post->ID, 'tour_id', true);
+					if ($tour_id == 1 || $post->post_name == 'halloween-cruise') $sidebar = str_lreplace('</div>', '', $sidebar);
+					_e($sidebar);
+				?>
             </div>
             <div class="vision_two_thirds">
                 <?php the_content(); ?>	
             </div>
 
-            <div class="one_third_lastcolumn">
-                <?php dynamic_sidebar('tour-sidebar'); ?>
-            </div>
      	</div>
 
     <?php endwhile;  //have_posts ?> 

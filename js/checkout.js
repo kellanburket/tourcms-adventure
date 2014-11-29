@@ -127,7 +127,7 @@
 			$('#checkout-continue-text').text('')
 			
 			document.body.style.cursor='wait';	
-			$.post(ajax.url, {
+			var data_variables = {
 				action: ajax.action, 
 				callback: 'authorize_tourcms_booking',
 				title: $('#title').val(),
@@ -146,7 +146,10 @@
 				//cc_year: $('#cc_year').val(),
 				user_id: $('#user_id').val(),
 				referring_url: $('#referring_url').val(),
-			}, function(data){
+			};
+
+
+			$.post(ajax.url, data_variables, function(data){
 			
 				
 			
@@ -211,7 +214,11 @@
 			'json'
 			).fail(function(data) {
 				alert("Sorry, there was a problem completing your booking. Please try again later.");
-				log_tourcms_error("checkout.js:server error", JSON.stringify(data));
+								
+				data_variables["xhr_response_text"] = data.responseText;
+				data_variables["xhr_status_text"] = data.statusText;				
+								
+				log_tourcms_error("checkout.js:server error", JSON.stringify(data_variables));
 				$("#checkout-continue").prop('disabled', false);
 				$('#sb-tour-spinning-loader').hide();
 				$('#checkout-continue-text').text(button_text);

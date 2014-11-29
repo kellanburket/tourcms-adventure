@@ -136,13 +136,18 @@ class wordpress_tourcms_helper extends tourcms_helper {
 		}
 		
 		$subject = 'Error Report';
-		$report = "\r\nBooing ID: $booking_id";
+		$report = "\r\nBooking ID: $booking_id";
 		$report .= "\r\nError Type: $type";
 		$report .= "\r\nRemote Address: {$_SERVER['REMOTE_ADDR']}";
 		$report .= "\r\nUser Browser: {$_SERVER['HTTP_USER_AGENT']}";
 		$report .= "\r\nMessage: $message";
-				
-		$wpdb->query($wpdb->prepare("INSERT INTO wp_tourcms_errors (error_type, message, booking_id, ip_address, user_agent) VALUES(%s, %s, %d, %s, %s)", array($type, $message, $booking_id, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']))); 					mail('web2@prideofmaui.com', $subject, $report);
+
+		$wasSent = mail('web2@prideofmaui.com', $subject, $report);
+		mail('phillip.rollins@mmsc-maui.com', $subject, $report);
+		mail('tyler.bliss@mmsc-maui.com', $subject, $report);
+						
+		$wpdb->query($wpdb->prepare("INSERT INTO wp_tourcms_errors (error_type, message, booking_id, ip_address, user_agent, mail_was_delivered) VALUES(%s, %s, %d, %s, %s, %d)", array($type, $message, $booking_id, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], ($wasSent) ? 1 : 0)));
+
 	}
 	
 	function save_engine($engine, $ip = NULL) {
