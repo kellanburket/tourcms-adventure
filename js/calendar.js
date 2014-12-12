@@ -18,16 +18,13 @@
 					calendar_table: "#tourcms-sidebar-table",
 					calendar_month_id: "#sb-tour-month",
 					date_input: "activity_date",
-
 					autoload: true,
-
 					onLoad: function(self) {
 						self.load_calendar({
 							th_class: "tourcms-sidebar-day",
 							td_class: "tourcms-sidebar-td"
 						});
 					}
-
 				});					
 
 			}).fail(function() {
@@ -38,7 +35,6 @@
 		});
 	}).fail(function() {
 		console.log("Base Fail", arguments);					
-	});
-	
+	});	
 })(jQuery);
 
