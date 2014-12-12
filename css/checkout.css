@@ -4,6 +4,9 @@
 	margin-top: 5px;
 }
 
+.hidden {
+	display: none;
+}
 /* checkout page */
 
 .sb-total-ul, .sb-booking-ul, .sb-booking-li {

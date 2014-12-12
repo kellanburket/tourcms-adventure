@@ -28,7 +28,6 @@
 	        u = ++d + m;
 			id = c + u.toString(16);	        
 			
-
 		$("input[name=user_id]").val(id);	
 		//console.log("uniqid", id, $("input[name=user_id]").val());
 
@@ -275,7 +274,7 @@
 			}
 							
 			var json_rates_data = get_rates_data(tour_rates);
-			console.log("rates data", json_rates_data);
+			//console.log("rates data", json_rates_data);
 
 			if (!json_rates_data) {
 				//modal.displayMessage(errors.date_error.message);
@@ -318,6 +317,7 @@
 			).done(function(data) {
 				
 				if (data.success == true) {
+					
 					var checkout_url = ajax.siteurl + '/' + data.checkout_url + '&_tourcms_sidebar_nonce=' + nonce;
 					if (data.debug == true) {
 						console.log(checkout_url);			
@@ -326,24 +326,33 @@
 					} else {
 						window.location = checkout_url;
 					}
+					
 				} else if (data.success == false) {
+					
 					//modal.displayMessage(data.error_message);
 					console.log("Fail", data);
+					
 					alert(data.error_message);
+					
 					$('#sb-submit').prop('disabled', false);
 					$('#sb-tour-spinning-loader').hide();
 					$('#sb-tour-submit-text').text(button_text);
 					//console.log("Error Message Trigger", data, data.error_message);
 				} else {
-					log_tourcms_error("rates.js(322)", "DONE: Could not submit sidebar form: " + JSON.stringify(data));								
+					log_tourcms_error("rates.js(322)", "DONE: Could not submit sidebar form: " + JSON.stringify(data));
+										
 					alert("Sorry! There was a technical problem!");
-					//console.log(data);
+
+					$('#sb-submit').prop('disabled', false);
+					$('#sb-tour-spinning-loader').hide();
+					$('#sb-tour-submit-text').text(button_text);
+
+					console.log(arguments);
 				}
 			}).fail(function(xhr, msg, error) {
-				//console.log(data);
 				log_tourcms_error("rates.js(330)", "FAIL: Could not submit sidebar form: " + xhr.responseText + "; " + msg + "; " + error);
-				//alert(errors.server);
 				alert("Sorry! There was a technical problem!");
+				console.log("Fail!", arguments);
 				//modal.displayMessage(data.error_message);
 				$('#sb-submit').prop('disabled', false);
 				$('#sb-tour-spinning-loader').hide();
@@ -545,7 +554,13 @@
 		var hasData = false;
 		var data = [];
 		for (rate in tour_rates) {
-			data.push({kind: tour_rates[rate].kind, number: tour_rates[rate].number});
+			data.push({
+				kind: tour_rates[rate].kind, 
+				number: tour_rates[rate].number,
+				rate: tour_rates[rate].rate,
+				total: tour_rates[rate].getTotal(),				
+			});
+			
 			if (tour_rates[rate].number > 0) {
 				hasData = true;
 			}

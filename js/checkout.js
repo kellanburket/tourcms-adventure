@@ -23,9 +23,73 @@
 	}
 	
 	var cc_date = new credit_card_date();
+
+	var base_total, total;
+	
+	function calculate_rate(base_total) {
+		var subtotal = 0;
+		$('.options').each(function() {
+			var number = $(this).find('[name=option_number]').val();
+			var rate = $(this).find('[name=option_rate]').val();
+			var kind = $(this).find('[name=option_kind]').val();
+			
+						
+			number = parseInt(number) || 0;
+			rate = parseFloat(rate) || 0;
+			var total = (number * rate) || 0;
+
+			var $kind = $('[data-kind="' + kind + '"]');
+			
+			$kind.find('.number').text(number);
+			$kind.find('.total').text(total);
+						
+			if (number <= 0)
+				$kind.addClass('hidden');
+			else
+				$kind.removeClass('hidden');
+
+			
+			subtotal += total;			
+			
+			console.log(number, kind, rate, total, subtotal, base_total);
+
+		});
+		var surcharge = parseInt($('[name=total_guests').val()) * 4;
+		console.log("surcharge", surcharge);
+		$('#subtotal').text(subtotal + base_total);
+
+		var tax = getTax(subtotal + base_total + surcharge);		
+		total = subtotal + base_total  + surcharge + tax;
+
+		$('#total').text(total.toFixed(2));
+		$('.total-tax').text(tax.toFixed(2));
+		$('[name=x_amount]').val(total.toFixed(2));		
+
+		console.log("New Total: ", total.toFixed(2));		
+		//$('[name=x_amount]').val();
+		//$('#total-cost-total').val();			
+	}
+
+	function getTax(total) {
+		var sales_tax = parseFloat($('[name=sales_tax]').val());
+		var taxedamount = total * (sales_tax/100);		
+
+		console.log(sales_tax, total, taxedamount);
+		return taxedamount;
+	}
 	
 	$(document).ready(function() {
 		referer = $('#referring_url').val()
+		subtotal = parseFloat($('[name=subtotal]').val());
+		options_total = parseFloat($('[name=options_total]').val());
+		base_total = subtotal - options_total;
+
+		total = subtotal;
+		console.log(subtotal, options_total, base_total, total);
+		
+		$('.options').find('[name=option_number]').on('change', function() {
+			calculate_rate(base_total);
+		});
 	
 		if($('[name=test_mode]' == 'false')) {
 			$('form').find('input').each(function() {
@@ -117,6 +181,17 @@
 				return;
 			}
 
+			var opts = [];
+			$('.options').each(function() {
+				
+				opts.push({
+					kind: $(this).find('[name=option_kind]').val(),
+					number:  $(this).find('[name=option_number]').val(),
+					rate:  $(this).find('[name=option_rate]').val()				
+				});
+			})
+			
+			console.log("Options", opts);
 			
 			$(this).prop('disabled', true);
 			$form = $('#authorize-payment-form');
@@ -141,6 +216,7 @@
 				county: $('#county').val(),
 				postcode: $('#postcode').val(),
 				country: $('#country').val(),
+				options: opts,
 				//cc_number: $('#cc_number').val(),
 				//cc_month: $('#cc_month').val(),
 				//cc_year: $('#cc_year').val(),
@@ -150,37 +226,23 @@
 
 
 			$.post(ajax.url, data_variables, function(data){
-			
-				
+				console.log("OK", data);
 			
 				if (data.success == true) {
-
-					var data_total = parseFloat(data.total);
+					var final_total = data.total;
 					var x_amount_total = parseFloat($("[name='x_amount']").val());
+					var booking_id = data.booking_id;
+					if (final_total != x_amount_total) {
+						var confirmed = confirm("Your Final Total Will Be $" + final_total.toFixed(2));
 
-					if (data_total == x_amount_total) {
-						var booking_id = $("<input>").attr("type", "hidden").attr("name", "booking_id").attr("id", "new_data").val(data.booking_id);
-					   	$form.append($(booking_id));
-		
-						if (data.debug == false) {
-							
-							try {
-								$form.submit();
-							} catch(err) {
-								log_tourcms_error("checkout.js:form.submit", err.message);
-								alert("Something went wrong while processing your request. Please try again later.");
-								$(this).prop('disabled', false);
-								$('#sb-tour-spinning-loader').hide();			
-								$('#checkout-continue-text').text(button_text);
-							}
-						} else {
-							alert('Debug Mode');
-							$form.submit();
-						}			
+						if (confirmed) {
+							$("[name='x_amount']").val(final_total.toFixed(2));
+							commitFinalBooking(booking_id);						
+						}
+						
 					} else {
-						alert("Something went wrong while calculating charges. Please try again later.");
-						log_tourcms_error("checkout.js:transaction_success", data_total + " not equal to " + x_amount_total);
-					}
+						commitFinalBooking(booking_id);					
+					}					
 				} else if (data.success == false) {
 					$("#checkout-continue").prop('disabled', false);
 					$('#sb-tour-spinning-loader').hide();
@@ -214,7 +276,8 @@
 			'json'
 			).fail(function(data) {
 				alert("Sorry, there was a problem completing your booking. Please try again later.");
-								
+				console.log("FAIL", data);
+					
 				data_variables["xhr_response_text"] = data.responseText;
 				data_variables["xhr_status_text"] = data.statusText;				
 								
@@ -227,5 +290,23 @@
 			});
 		});
 		$('[name=x_exp_date]').val('');
+
+
 	});
+
+	function commitFinalBooking(booking_id) {
+		var booking_id = $("<input>").attr("type", "hidden").attr("name", "booking_id").attr("id", "new_data").val(booking_id);
+		$form.append($(booking_id));
+									
+		try {
+			$form.submit();
+		} catch(err) {
+			log_tourcms_error("checkout.js:form.submit", err.message);
+			alert("Something went wrong while processing your request. Please try again later.");
+			$(this).prop('disabled', false);
+			$('#sb-tour-spinning-loader').hide();			
+			$('#checkout-continue-text').text(button_text);
+		}
+	}
+	
 })(jQuery);

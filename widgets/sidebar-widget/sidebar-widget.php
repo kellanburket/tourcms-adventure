@@ -100,7 +100,7 @@ class TourcmsSidebarWidget extends WP_Widget {
 		$tourcms = new TourCMS();
 		$tour = $tourcms->show_tour($tour_id, $channel_id, $params)->tour;
 
-		if (!class_exists(KBC_XML_Parser)) {
+		if (!class_exists('KBC_XML_Parser')) {
 			require_once(TOURCMS_ROOT.'/lib/xml-parser.php');
 		}
 		
@@ -110,7 +110,7 @@ class TourcmsSidebarWidget extends WP_Widget {
 	
 		$args = array(
 			'tour_id' => $tour_id,
-			'user' => uniqid(mt_rand(5000)),
+			'user' => uniqid(mt_rand(0, 5000)),
 			'display_month' => $this->get_display_month(),
 			'rates' => $this->get_rates($tour->new_booking->people_selection->rate, $tour->options->option),			
 			'tour_name'=> $tour->tour_name_long
@@ -238,10 +238,10 @@ class TourcmsSidebarWidget extends WP_Widget {
                 <h4 class="sb-tour-h4"><?php echo $tour_name; ?></h4>
    			</div>
             <!-- Tablet Booking Elements -->
-           	<?php echo $mobile_booking_elements; ?>	
+           	<?php echo (isset($mobile_booking_elements)) ? $mobile_booking_elements : ""; ?>	
             <!-- / -->
             <!-- Tablet Booking Elements -->
-           	<?php echo $tablet_booking_elements; ?>	
+           	<?php echo (isset($tablet_booking_elements)) ? $tablet_booking_elements : ""; ?>	
             <!-- / -->
 
             <!--Begin Tour Form -->
@@ -260,7 +260,11 @@ class TourcmsSidebarWidget extends WP_Widget {
 	                        <button id="sb-tour-forward-one" class="forward-one sb-tour-button">&rarr;</button>
 	                    </div>
 	                   
-	                    <div class="table-wrapper"></div>
+	                    <div class="table-wrapper">
+		                    <table id="tourcms-sidebar-table" class="tourcms-live-calendar-table">
+		                    
+		                    </table>
+	                    </div>
 	                </div>
                 </div>
                 <ul class="availability-key">
@@ -270,7 +274,7 @@ class TourcmsSidebarWidget extends WP_Widget {
                 </ul>
                 <div class="sb-tour-activity-date-wrap">
                     <p class="sb-tour-p" id="activity-date-lb">Activity Date</p>
-                    <input type="text" id="sb-tour-activity-date-field" name="activity_date" class="sb-confirm-field" disabled />
+                    <input type="text" id="sb-tour-activity-date-field" name="activity_date" class="sb-confirm-field" placeholder="MM/DD/YYYY">
                 </div>
             </div>
             

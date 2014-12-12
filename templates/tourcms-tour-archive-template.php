@@ -34,9 +34,11 @@ $order = json_decode(get_option('tourcms_order'), true);
 	<?php foreach($order['visible'] as $tour_id) { ?>
     <div class="tour-archive-wrapper">		
         <h3 class="tour-archive-h3"><a href="<?php echo $tours[$tour_id]['url']; ?>"><?php echo $tours[$tour_id]['tour_name']; ?></a></h3>
-        <div class="tour-archive-thumbnail">
-            <img src="<?php echo $tours[$tour_id]['image']; ?>" class="tour-archive-image">
-        </div>
+        <a href="<?php echo $tours[$tour_id]['url']; ?>">
+        	<div class="tour-archive-thumbnail">
+            	<img src="<?php echo $tours[$tour_id]['image']; ?>" class="tour-archive-image">
+			</div>
+        </a>
 		<div class="tour-archive-description">
             <p><?php echo $tours[$tour_id]['description']; ?></p>
             <a href="<?php echo $tours[$tour_id]['url']; ?>"><button class="tour-archive-book-now">Book Now</button></a>	

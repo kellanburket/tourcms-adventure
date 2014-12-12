@@ -45,7 +45,6 @@ class KBC_XML_Recursion_Helper {
 	function parse_attributes($attributes, &$type, &$value, &$tag, &$index, $nodes) {
 		if ($attributes['TYPE'] == 'array') {
 			$this->is_type_array = true;		
-		
 		} 
 		/*
 		elseif ($attributes['TYPE'] == 'pair') {
@@ -86,9 +85,9 @@ class KBC_XML_Parser {
 			//echo '<br>';
 			
 			$type = $nodes[$i]['type'];
-			$value = $nodes[$i]['value'];
-			$tag = $nodes[$i]['tag'];			
-			$attributes = $nodes[$i]['attributes'];
+			$value = array_key_exists('value', $nodes[$i]) ? $nodes[$i]['value'] : "";
+			$tag = array_key_exists('tag', $nodes[$i]) ? $nodes[$i]['tag'] : "";			
+			$attributes = array_key_exists('attributes', $nodes[$i]) ? $nodes[$i]['attributes'] : array("TYPE" => "");
 				
 			$helper = new KBC_XML_Recursion_Helper($element, $tag, $is_array);
 			$helper->parse_attributes($attributes, $type, $value, $tag, $i, $nodes);

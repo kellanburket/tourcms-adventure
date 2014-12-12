@@ -13,18 +13,18 @@ class TourSwitchbox {
 	function parse_field($field, $class, $data) {
 		$class_string = $class;
 		if (is_array($field)) {
-			if ($field['first']) {
+			if (array_key_exists('first', $field)) {
 				if ($field['format'] == 'range') {
 					$first = $data->$field['first'];
 					$second = $data->$field['first'];				
 					$text_string = $first.'&ndash;'.$second; 
 				}				
 			}
-			if ($field['class']) {
+			if (array_key_exists('class', $field)) {
 				$class_string = $field['class'];
 			}
 		
-			if ($field['handle']) {
+			if (array_key_exists('handle', $field)) {
 				$text_string = $data->$field['handle'];			
 			}
 		} else {
@@ -44,7 +44,9 @@ class TourSwitchbox {
 			$tabs_view .= '<li class="'.$specs['tab_class'].' '.$this->class.'" id="'.$specs['tab_id'].'-'.$i.'">'.$tabs[$i]['name'].'</li>';
 			$frame_view .= '<div class="'.$specs['panel_class'].' '.$this->class.'" id="'.$specs['panel_id'].'-'.$i.'">';		
 			foreach($tabs[$i]['contents'] as $content) {
-				$frame_view .= '<p class="'.$specs['head_class'].'"><strong>'.$content['field_head'].'</strong></p>';
+				$field_head = array_key_exists('field_head', $content) ? $content['field_head'] : "";
+				
+				$frame_view .= '<p class="'.$specs['head_class'].'"><strong>'.$field_head.'</strong></p>';
 				$frame_view .= $this->parse_field($content['field_handle'], $specs['field_class'], $data);	
 			}
 			$frame_view .= '</div>';

@@ -1,7 +1,9 @@
 <?php
 require_once('tourcms_helper.php');
 global $wpdb;
-define('TOURCMS_BOOKING_TABLE', $wpdb->prefix.'tourcms_bookings');
+
+if (!defined('TOURCMS_BOOKING_TABLE')) 
+	define('TOURCMS_BOOKING_TABLE', $wpdb->prefix.'tourcms_bookings');
 
 class wordpress_tourcms_helper extends tourcms_helper {
 
@@ -126,28 +128,42 @@ class wordpress_tourcms_helper extends tourcms_helper {
 		}
 	}
 	
-	public function log_error($type, $message, $booking_id = NULL) {
+	public function log_error($type, $message, $booking_id = 0) {
 		global $wpdb;
+		$remote_addr = array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : "";
+		$user_agent = array_key_exists('HTTP_USER_AGENT', $_SERVER) ? $_SERVER['HTTP_USER_AGENT'] : "";
+
+		/*
 		if (!$booking_id && array_key_exists('user_id', $_POST)) {
 			$engine = $this->load_engine($_POST['user_id']);
 			if (is_object($engine)) {
 				$booking_id = $engine->get_booking_id();
 			}
 		}
-		
+		*/		
+
 		$subject = 'Error Report';
 		$report = "\r\nBooking ID: $booking_id";
 		$report .= "\r\nError Type: $type";
-		$report .= "\r\nRemote Address: {$_SERVER['REMOTE_ADDR']}";
-		$report .= "\r\nUser Browser: {$_SERVER['HTTP_USER_AGENT']}";
+		$report .= "\r\nRemote Address: {$remote_addr}";
+		$report .= "\r\nUser Browser: {$user_agent}";
 		$report .= "\r\nMessage: $message";
 
-		$wasSent = mail('web2@prideofmaui.com', $subject, $report);
-		mail('phillip.rollins@mmsc-maui.com', $subject, $report);
-		mail('tyler.bliss@mmsc-maui.com', $subject, $report);
+		//$wasSent = mail('web2@prideofmaui.com', $subject, $report);
+		//mail('phillip.rollins@mmsc-maui.com', $subject, $report);
+		//mail('tyler.bliss@mmsc-maui.com', $subject, $report);
+		
 						
-		$wpdb->query($wpdb->prepare("INSERT INTO wp_tourcms_errors (error_type, message, booking_id, ip_address, user_agent, mail_was_delivered) VALUES(%s, %s, %d, %s, %s, %d)", array($type, $message, $booking_id, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], ($wasSent) ? 1 : 0)));
+		$wpdb->query(
+			$wpdb->prepare(
+				"INSERT INTO wp_tourcms_errors (error_type, message, booking_id, ip_address, user_agent) VALUES(%s, %s, %d, %s, %s)", 
+				array($type, $message, $booking_id, $remote_addr, $user_agent)
+			)
+		);
 
+		$log = fopen('errors.log', 'a+');
+		fwrite($log, $remote_addr . " " . $message);
+		fclose($log);
 	}
 	
 	function save_engine($engine, $ip = NULL) {

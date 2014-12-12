@@ -1,0 +1,131 @@
+#search-now {
+	width: 136px;
+	height: 32px;
+}
+
+.spinner {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 10px;
+	display: none;
+}
+
+#calendar-button {
+	width: 20%;
+	background: url("/wp-content/plugins/tourcms-adventure/img/calendar-icon.png") no-repeat;
+	background-size: contain;
+	background-position: right;
+	height: 36px;
+	float: right;
+}
+
+#calendar-date {
+	width: 80%;
+	height: 36px!important;
+}
+
+#pop-up-calendar {
+	padding: 5px;
+}
+
+.datepicker-calendar th {
+	width: 27px;
+	text-align: center;
+}
+
+.yellar-text {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	color: #fb9f1a;
+}
+
+.black-text {
+	color: #000000;
+}
+
+.white {
+	background: #ffffff;
+}
+
+.yellar {
+	/*background: #ffc000;*/
+	background: #eb9b1d;
+	background: #f9c667;
+	background: -moz-linear-gradient(top, #f9c667 0%, #f48c16 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f9c667), color-stop(100%,#f48c16));
+	background: -webkit-linear-gradient(top, #f9c667 0%,#f48c16 100%);
+	background: -o-linear-gradient(top, #f9c667 0%,#f48c16 100%);
+	background: -ms-linear-gradient(top, #f9c667 0%,#f48c16 100%);
+	background: linear-gradient(to bottom, #f9c667 0%,#f48c16 100%);
+}
+
+.homepage-widget, .homepage-widget-background {
+	position: absolute; 
+	bottom: 0;
+	right: 0;
+	left: 0;
+	height: 90px;
+}
+
+.homepage-widget-background {
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	background: black;
+	opacity: .5;
+}
+
+.homepage-widget > ul {
+	max-width: 90%; 
+	top: 5px;
+	margin: 0 auto;
+	list-style: none;
+	position: relative;
+}
+
+.homepage-widget > ul > li {
+	margin: 0px 1%;
+	float: left;
+	height: 85px;
+	position: relative;
+}
+
+.homepage-widget > ul > li:nth-child(1) {
+	width: 27%;
+}
+
+
+.homepage-widget > ul > li:nth-child(2) {
+	width: 24%;
+}
+
+.homepage-widget > ul > li:nth-child(4), .homepage-widget > ul > li:nth-child(3) {
+	width: 13%;
+}
+
+.homepage-widget > ul > li:nth-child(5) {
+	width: 13%;
+}
+
+
+.homepage-widget > ul > li > div {
+	position: absolute;
+	margin: auto;
+	bottom: 0;
+	width: 100%;
+}
+
+.homepage-widget > ul > li > div {
+
+}
+
+.homepage-widget > ul > li > div > p {
+	margin-bottom: 5px;
+	padding: 0;
+	text-align: center;
+}
+
+.homepage-widget > ul > li > div > button {
+	vertical-align: bottom;
+	position: relative;
+	bottom: 12px;
+}

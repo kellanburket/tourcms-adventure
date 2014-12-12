@@ -18,14 +18,16 @@ class TourcmsBookingEngine {
 	public $tour_name;
 	public $user_id;
 	public $total_amount;
-
+	public $subtotal;
+	public $options;
+	
 	public $sales_tax;
 	public $booking_fee;
 	
 	private $helper;
 	private $debug;
 	
-	private $rates;
+	public $rates;
 	public $total_customers;
 	public $client_name;
 	public $order_completed;
@@ -59,14 +61,17 @@ class TourcmsBookingEngine {
 	}
 
 	public function get_booking_id() {
-		if ($this->booking_id)
+		if (isset($this->booking_id))
 			return $this->booking_id;
-		else
+		elseif (isset($this->temp_booking_id))
 			return $this->temp_booking_id;
+		else
+			return "";
 	}
 
 	private function return_message($message, $tourcms_message = '') {
-		$this->helper->log_error("booking_engine", "Message: $message | Tourcms Message: $tourcms_message", $this->get_booking_id());
+		$this->helper->log_error("booking_engine", $message, $this->get_booking_id());
+		
 		return json_encode(array('success'=>false, 'error_message'=>$message, 'tourcms_message'=>$tourcms_message));
 	}
 
@@ -79,7 +84,7 @@ class TourcmsBookingEngine {
 		foreach ($tours as $index=>$tour) {
 			if ($tour->tour_id == $tour_id) {
 				$real_tour = true;
-				$this->tour_name = strip_tags($tour->tour_name->asXML());
+				$this->tour_name = (string) $tour->tour_name;
 				break;
 			}
 		}
@@ -106,24 +111,17 @@ class TourcmsBookingEngine {
 		}
 		
 		$this->rates = $rates_data;
-		
+
 		$this->validate_options($options_data);
 		
 		//check to make sure promo code is valid;
 		$this->promo_code = $this->validate_promo_code($promo_code, $tourcms, $channel_id);
 
 		//check to make sure a valid date has been given;
-		$tour_date = explode("/", $tour_date);
-		$month = ($tour_date[0] < 10) ? "0".$tour_date[0] : $tour_date[0];
-		$day = ($tour_date[1] < 10) ? "0".$tour_date[1] : $tour_date[1];
-		$year = $tour_date[2];
-		
-		if (!checkdate($month, $day, $year)) {
-			return $this->return_message($this->invalid_date_error, "Invalid Date"); 
-		}
+		$this->tour_date = $this->validate_date($tour_date);
 
-		$this->tour_date = $year.'-'.$month.'-'.$day;
 
+		$this->subtotal = $this->calculate_subtotal();
 
 		$availability = $this->check_tour_availability($tourcms, $channel_id);		
 	
@@ -136,8 +134,7 @@ class TourcmsBookingEngine {
 		$url_data = new SimpleXMLElement('<url />'); 
 		$url_data->addChild('response_url',	$url);	
 		$result = $tourcms->get_booking_redirect_url($url_data, $channel_id);	
-		$redirect_url = $result->url->redirect_url;
-		
+		$redirect_url = $result->url->redirect_url;		
 		$this->booking_key = file_get_contents($redirect_url);
 		
 		if ($this->booking_key == null) {
@@ -197,64 +194,85 @@ class TourcmsBookingEngine {
 
 	public function new_booking($booking, $tourcms, $channel_id) {
 		$result = $tourcms->start_new_booking($booking, $channel_id);
-		
-		$error = (string) $result->error;
-		
-		if ($error == "OK") {
-			$unavailable = (int) $result->unavailable_component_count;
-			
-			$this->booking = $booking->asXML();
-			$this->temp_booking_id = (string) $result->booking->booking_id;
-			
-			$this->total_amount = (string) $result->booking->sales_revenue;
 
-			$this->booking_fee = array();			
-			$this->booking_fee['description'] = "Fuel Surcharge"; //(string) $result->booking->booking_fee->description;
-			$this->booking_fee['type'] = "PER_PERSON"; //(string) $result->booking->booking_fee->fee_type;
-			$this->booking_fee['fee'] = 4.00; //(float) $result->booking->booking_fee->fee;
-
-			if ($unavailable == 0) {
-				$this->save_order();
-				return json_encode(array(
-					'success'=> true,
-					'debug'=> $this->debug,
-					'nonce'=> $this->nonce,
-					'user_id'=>$this->user_id,
-					'checkout_url'=>$this->checkout_url			
-				));
-			} elseif ($unavailable > 0) {
-				$this->helper->log_error("booking", "No Available Components: $unavailable", $this->get_booking_id());
-				return json_encode(array(
-					'success'=>false, 
-					'unavailable_components'=>$unavailable, 
-					'error_message'=>$this->no_availabilities_error, 
-					'tourcms_error'=>$error));
+		if($result) {		
+			$error = (string) $result->error;
+			
+			if ($error == "OK") {
+				$unavailable = (int) $result->unavailable_component_count;
+				
+				$this->booking = $booking->asXML();
+				$this->temp_booking_id = (string) $result->booking->booking_id;
+				
+				$this->total_amount = (string) $result->booking->sales_revenue;
+	
+				$this->booking_fee = array();			
+				$this->booking_fee['description'] = "Fuel Surcharge"; //(string) $result->booking->booking_fee->description;
+				$this->booking_fee['type'] = "PER_PERSON"; //(string) $result->booking->booking_fee->fee_type;
+				$this->booking_fee['fee'] = 4.00; //(float) $result->booking->booking_fee->fee;
+	
+				if ($unavailable == 0) {
+					$this->save_order();
+					return json_encode(array(
+						'success'=> true,
+						'debug'=> $this->debug,
+						'nonce'=> $this->nonce,
+						'user_id'=>$this->user_id,
+						'checkout_url'=>$this->checkout_url			
+					));
+				} elseif ($unavailable > 0) {
+					$this->helper->log_error("booking", "No Available Components: $unavailable", $this->get_booking_id());
+					return json_encode(array(
+						'success'=>false, 
+						'unavailable_components'=>$unavailable, 
+						'error_message'=>$this->no_availabilities_error, 
+						'tourcms_error'=>$error));
+				} else {
+					$this->helper->log_error("booking", "No Available Components: $unavailable", $this->get_booking_id());
+					return json_encode(array(
+						'success'=> false,
+						'debug'=> true,
+						'user_id'=>$this->user_id,
+						'checkout_url'=>$this->checkout_url,
+						'tourcms_error'=>$error));
+				}
+	
 			} else {
-				$this->helper->log_error("booking", "No Available Components: $unavailable", $this->get_booking_id());
-				return json_encode(array(
-					'success'=> false,
-					'debug'=> true,
-					'user_id'=>$this->user_id,
-					'checkout_url'=>$this->checkout_url,
-					'tourcms_error'=>$error));
+				
+				if (is_object($result)) {
+					$errorlog = $result->asXML();
+				}
+	
+				$this->helper->log_error("tourcms", $errorlog, $this->get_booking_id());
+				if ($error == 'PLEASE ADD total_customers') {
+					return json_encode(array('success'=>false, 'error_message'=>$this->missing_customers_error));					
+				} else {
+					return json_encode(array('success'=>false, 'error_message'=>$this->tourcms_technical_problem, 'tourcms_error'=>$error));
+				}
+				
 			}
-
 		} else {
-			$this->helper->log_error("tourcms", $result->asXML(), $this->get_booking_id());
-			if ($error == 'PLEASE ADD total_customers') {
-				return json_encode(array('success'=>false, 'error_message'=>$this->missing_customers_error));					
-			} else {
-				return json_encode(array('success'=>false, 'error_message'=>$this->tourcms_technical_problem, 'tourcms_error'=>$error));
-			}
-			
+			return json_encode(array('success'=>false, 'error_message'=>$this->tourcms_technical_problem));		
 		}
 		
 	}
 	
 	public function authorize($post, $tourcms, $channel_id) {
-		$booking = simplexml_load_string($this->booking);
-		$customer = $booking->customers->customer;
 
+		$booking = simplexml_load_string($this->booking);
+		$availability = $this->check_tour_availability($tourcms, $channel_id);		
+
+		if (array_key_exists('options', $post)) {
+			$options_data = $post['options'];
+		
+			$this->validate_options($options_data);		
+			
+			if ($options_data) {
+				$this->process_options_data($booking->components->component, $availability, $options_data);
+			}
+		}		
+
+		$customer = $booking->customers->customer;
 		$customer[0]->email = $this->validate_email($post['email']);
 		$customer[0]->title = $this->validate_title($post['title']);
 		$customer[0]->firstname = $this->validate_string($post['firstname']);
@@ -267,27 +285,25 @@ class TourcmsBookingEngine {
 		$customer[0]->country = $this->validate_string($post['country']);
 		$customer[0]->tel_mobile = $this->validate_string($post['tel_mobile']);
 
-		$this->client_name = $post['firstname'] . " " . $post['surname'];
-
+		$this->client_name = $post['firstname'] . " " . $post['surname'];	
 
 		$final_booking = $tourcms->start_new_booking($booking, $channel_id);
 		$error = (string) $final_booking->error;
 		if ($error == "OK") {
+		
+			//echo json_encode($final_booking);
+			//exit;
 			$this->final_booking_id = (string) $final_booking->booking->booking_id;
-			
-			$this->booking_fee = array();			
-			$this->booking_fee['display'] = (string) $result->booking->booking_fee->fee_display;
-			$this->booking_fee['description'] = (string) $result->booking->booking_fee->description;
-			$this->booking_fee['type'] = (string) $result->booking->booking_fee->fee_type;
-			$this->booking_fee['fee'] = (float) $result->booking->booking_fee->fee;
-
+			$this->total_amount = (float) $final_booking->booking->sales_revenue;
+						
 			$this->save_order();
+			
 			return json_encode(array(
 				"success"=>true, 
 				"debug"=>$this->debug, 
+				"total"=>$this->total_amount,
 				"user_id"=>$this->user_id, 
-				"booking_id"=>$this->final_booking_id,
-				"total"=>$this->total_amount
+				"booking_id"=>$this->final_booking_id
 			));
 	
 		} else {
@@ -308,6 +324,8 @@ class TourcmsBookingEngine {
 		$booking->components->component->note = $hotel.', '.$room;
 		$this->validate_options($options_data);
 		$this->process_options_data($booking->components->component, $availability, $options_data);
+
+		
 	
 		return $this->new_booking($booking, $tourcms, $channel_id);
 	}
@@ -415,27 +433,34 @@ class TourcmsBookingEngine {
 			}
 		}
 		
-		$tour_options = $availability->available_components->component->options->option;
-		//echo "Tour Options: ".count($tour_options)."\n";
-		for($i = 0; $i < count($tour_options); $i++) {
-			if (is_array($options_data)) {
-				foreach($options_data as $option) {
-					//echo "Tourcms Option Name: ".$tour_options[$i]->option_name."\n";
-					//echo "Saved Option Data: ".$options_data[$j]['name']."\n";
-					if ($tour_options[$i]->option_name == $option['kind'] && $option['number'] > 0) {		
-						if ($options_added == false) {
-							$booking_options = $component->addChild('options');
-							$options_added = true;
+		$live_components = $availability->available_components;
+
+		if ((string) $live_components->component) {
+			$tour_options = $live_components->component->options->option;
+			//echo "Tour Options: ".count($tour_options)."\n";
+			for($i = 0; $i < count($tour_options); $i++) {
+				if (is_array($options_data)) {
+					foreach($options_data as $option) {
+						//echo "Tourcms Option Name: ".$tour_options[$i]->option_name."\n";
+						//echo "Saved Option Data: ".$options_data[$j]['name']."\n";
+						if ($tour_options[$i]->option_name == $option['kind'] && $option['number'] > 0) {		
+							if ($options_added == false) {
+								$booking_options = $component->addChild('options');
+								$options_added = true;
+							}
+							$booking_option = $booking_options->addChild('option');
+							$booking_option->addChild(
+								'component_key', 
+								$tour_options[$i]->quantities_and_prices->selection[$option['number'] - 1]->component_key
+							);
+							break 1;
 						}
-						$booking_option = $booking_options->addChild('option');
-						$booking_option->addChild(
-							'component_key', 
-							$tour_options[$i]->quantities_and_prices->selection[$option['number'] - 1]->component_key
-						);
-						break 1;
 					}
 				}
 			}
+		} else {
+			echo $this->return_message($this->no_availabilities_error); 
+			exit;
 		}
 	}
 	
@@ -457,8 +482,45 @@ class TourcmsBookingEngine {
 		return $email;
 	}
 	
-	function validate_date() {
-	
+	function validate_date($tour_date) {
+		preg_match("/(?<month>\d{1,2})[\/-](?<day>\d{1,2})[\/-](?<year>\d{2,4})/", $tour_date, $matches);
+
+		if (is_array($matches) && array_key_exists("month", $matches) && array_key_exists("day", $matches) && array_key_exists("year", $matches)) {
+			$month = intval($matches["month"]);
+			$day = intval($matches["day"]);
+
+			$currentYear = date('Y');	
+		
+			$year = ($matches["year"] < 100) ? intval(substr($currentYear, 0, 2) . $matches["year"]) : intval($matches["year"]);
+						
+			if ($month > 12 || $month < 1) {
+				echo $this->return_message($this->invalid_date_error, "Invalid Date"); 			
+				exit;
+			}
+			
+			if ($year < $currentYear) {
+				echo $this->return_message($this->invalid_date_error, "Invalid Date");			
+				exit;
+			}
+			
+			$days_in_month = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+			
+			if ($day > $days_in_month || $day < 1) {
+				echo $this->return_message($this->invalid_date_error, "Invalid Date");			
+				exit;
+			}
+			
+		} else {
+			echo $this->return_message($this->invalid_date_error, "Invalid Date"); 		
+			exit;
+		}
+		
+		if (!checkdate($month, $day, $year)) {
+			echo $this->return_message($this->invalid_date_error, "Invalid Date"); 
+			exit;
+		}
+
+		return $year.'-'.$month.'-'.$day;	
 	}
 	
 	function validate_title($title) {
@@ -503,11 +565,15 @@ class TourcmsBookingEngine {
 	
 	private function validate_options(&$options_data) {
 		if ($options_data) {
+			$this->options = array();
 			for($i = 0; $i < count($options_data); $i++) {
 				$options_data[$i]['number'] = (isset($options_data[$i]['number'])) ? intval($options_data[$i]['number']) : 0;
 				$options_data[$i]['rate'] = (isset($options_data[$i]['rate'])) ? floatval($options_data[$i]['rate']) : 0;
 				$options_data[$i]['total'] = (isset($options_data[$i]['total'])) ? floatval($options_data[$i]['total']) : 0;
+				$this->options[$options_data[$i]["kind"]] = $options_data[$i];
 			}
+				
+			
 		}
 	}
 	
@@ -519,13 +585,61 @@ class TourcmsBookingEngine {
 		}
 		
 		$availability = $tourcms->check_tour_availability($params, $this->tour_id, $channel_id);
-		$error = strip_tags($availability->error->asXML());
+		$error = (string) $availability->error;
+
 		if ($error == 'OK') {
 			return $availability;
 		} else {
 			echo $this->return_message($this->no_availabilities_error, $error); 
 			exit;
 		}		
+	}
+	
+	public function get_rates() {
+		$output = array();
+		foreach($this->rates as $rate) {
+			$output[$rate['kind']] = $rate;		
+		}
+		return $output;
+	}
+
+	public function calculate_options_total() {
+		$ototal = 0;
+		if (is_array($this->options)) {
+			foreach($this->options as $option) {
+				$ototal += $option['rate'] * $option['number'];
+			}			
+		}
+		
+		return $ototal;
+	}
+	
+	public function calculate_subtotal() {
+		$this->subtotal = 0;
+		
+		if (is_array($this->rates)) {			
+			foreach($this->rates as $rate) {
+				$this->subtotal += $rate['total'];		
+			}
+		}
+
+		if (is_array($this->options)) {
+			foreach($this->options as $option) {
+				$this->subtotal += $option['rate'] * $option['number'];
+			}			
+		}
+		
+		return $this->subtotal;
+		/*
+		echo json_encode(
+			array( 
+				"rates" => $this->rates,
+				"options" => $this->options,
+				"subtotal" => $this->subtotal 
+			)
+		);
+		exit;
+		*/
 	}
 	
 	private function save_order() {

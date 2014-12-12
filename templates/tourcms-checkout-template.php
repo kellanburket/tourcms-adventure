@@ -8,6 +8,14 @@ if (isset($_REQUEST['_tourcms_sidebar_nonce'])) {
 	$nonce = $_REQUEST['_tourcms_sidebar_nonce'];
 } elseif (isset($_REQUEST['_tourcms_footer_nonce'])) {
 	$nonce = $_REQUEST['_tourcms_footer_nonce'];
+} elseif (isset($_REQUEST['_tourcms_homepage_nonce'])) {
+	$nonce = $_REQUEST['_tourcms_homepage_nonce'];
+}
+
+
+$showAddOns = false;
+if (isset($_REQUEST['showAddOns'])) {
+	$showAddOns = !!$_REQUEST['showAddOns'];
 }
 
 if (!wp_verify_nonce($nonce, 'tourcms_checkout')) {
@@ -47,12 +55,14 @@ $totals_string = stripslashes($engine->totals_string); //stripslashes($xml['tota
 $booking_id = $engine->booking_id;
 $tour_date = $engine->tour_date; //$xml['tour_date'];
 $tour_name = $engine->tour_name; //$xml['tour_name'];
+$tour_id = $engine->tour_id;
+$user_options = $engine->options;
 
 
 $year = intval(date("Y"));
 $utc_timestamp = time();
 $amount = $engine->total_amount;
-
+$subtotal = $engine->calculate_subtotal();
 
 $total_guests = $engine->total_customers;
 $sales_tax = $engine->sales_tax;
@@ -77,7 +87,12 @@ $sim = new AuthorizeNetSIM_Form(
 );
 
 $hidden_fields = $sim->getHiddenFieldString();
+$tour_options = get_tour_options($tour_id, $tour_date);
+$options_total = $engine->calculate_options_total();
+$user_rates = $engine->get_rates();
+$sales_tax = get_option('tourcms_sales_tax');
 
+$total_tax = calculate_sales_tax($subtotal + (4 * $total_guests), $sales_tax);
 
 ?>
 <h1>Checkout</h1>
@@ -89,6 +104,10 @@ $hidden_fields = $sim->getHiddenFieldString();
     <input type="hidden" name="referring_url" value="<?php echo $referer; ?>" id="referring_url">
 	<input type="hidden" name="test_mode" value="<?php echo $test_mode; ?>">
 	<input type="hidden" name="ip" value="<?php echo $_SERVER['REMOTE_ADDR']; ?>">
+	<input type="hidden" name="subtotal" value="<?php echo $subtotal; ?>">
+	<input type="hidden" name="options_total" value="<?php echo $options_total; ?>">
+	<input type="hidden" name="sales_tax" value="<?php echo $sales_tax; ?>">
+	<input type="hidden" name="total_guests" value="<?php echo $total_guests; ?>">
 
     <div id="checkout-wrap">
         <div id="checkout-main">
@@ -172,8 +191,48 @@ $hidden_fields = $sim->getHiddenFieldString();
                 <label class="checkout-label">Country</label>
                 <input type="text" name="x_country" id="country" class="checkout-field" value="<?php echo $prefill ? 'US' : ''; ?>"> 
             </div>
-            
-            <div id="checkout-div-4" class="checkout-div">
+			<?php if ( count($tour_options) > 0 ): ?>
+
+			<div id="checkout-div-4" class="checkout-div">
+                <div class="checkout-h3-wrap">
+                    <h3>Add Ons</h3>
+                </div>
+				<table id="available-upgrades">		
+					
+				<?php 
+					$option_total = 0;
+					for ($i = 0; $i < count($tour_options); $i++) {
+						$option_name = (string) $tour_options[$i]->option_name;
+
+						if (array_key_exists($option_name, $user_options)) {
+							$option_number = $user_options[$option_name]['number'];
+							$option_total += $user_options[$option_name]['rate'] * $user_options[$option_name]['number'];
+						} else {
+							$option_number = 0;		
+						}
+
+						$display_price = parse_display_price($tour_options[$i]->from_price);
+				?>
+
+					<tr>
+						<td class="booking-td"><?php echo $option_name; ?></td>
+						<td class="booking-td td-mid">$<?php echo sprintf('%.2f', $display_price); ?></td>	
+						<td class="booking-td">
+							<fieldset name="tour_options[<?php echo $i; ?>]" class="options">
+								<input type="number" name="option_number" id="option-number-field-<?php echo $i; ?>" class="confirm-field" min="0" value="<?php echo $option_number; ?>" max="<?php echo $total_guests; ?>">
+								<input type="hidden" name="option_kind" value="<?php echo (string) $option_name; ?>" id="option-kind-field-<?php echo $i; ?>">
+								<input type="hidden" name="option_rate" value="<?php echo $display_price; ?>" id="option-rate-field-<?php echo $i; ?>">
+							</fieldset>
+						</td>			
+					</tr>		
+					<?php } ?>
+				</table>
+				<input type="hidden" name="option_total" value="<?php echo $option_total; ?>">
+			</div>
+			<?php endif; ?>
+			
+
+            <div id="checkout-div-5" class="checkout-div">
                 <div class="checkout-h3-wrap">
                     <h3>Payment Information</h3>
                 </div>
@@ -213,7 +272,7 @@ $hidden_fields = $sim->getHiddenFieldString();
             
        
         </div>
-        
+		<!--        
         <div id="checkout-sidebar">
             <div id="checkout-sidebar-div-1" class="checkout-div checkout-sidebar-div">
                 <div id="checkout-sidebar-top">
@@ -224,6 +283,7 @@ $hidden_fields = $sim->getHiddenFieldString();
                 </div>
             </div>
         </div>
+        -->
     </div>
      <div id="checkout-wrap-2" class="checkout-div">
             <h3>Confirm Order and Pay</h3>
@@ -244,7 +304,48 @@ $hidden_fields = $sim->getHiddenFieldString();
                     <tr class="checkout-tbody-tr checkout-tr">
                         <td class="checkout-tbody-td checkout-td checkout-row-1" id="checkout-activity"><?php echo $tour_name; ?></td>
                         <td class="checkout-tbody-td checkout-td checkout-row-2" id="checkout-date"><?php echo $tour_date; ?></td>
-                        <td class="checkout-tbody-td checkout-td checkout-row-3" id="checkout-subtotal"><?php echo $totals_string; ?></td>
+                        <td class="checkout-tbody-td checkout-td checkout-row-3" id="checkout-subtotal">
+	                    	<ul class="sb-booking-ul">
+							<?php if ( is_array($user_rates) ): ?>
+							<?php foreach($user_rates as $name => $rate): ?>
+								<?php if ($rate['number'] > 0): ?>
+									<li class="sb-booking-li" data-kind="<?php echo $name; ?>">
+										<?php
+											printf("<span class='number'>%d</span> <span class='kind'>%s</span> at $<span class='rate'>%.2f</span> = $<span class='total'>%.2f</span>",	$rate['number'],
+												ucfirst(($rate['number'] == 1) ? singularize($name) : $name),
+												$rate['rate'],
+												$rate['number'] * $rate['rate']
+											);
+										?>
+									</li>										
+								<?php endif; ?>
+							<?php endforeach; ?>
+							<?php endif; ?>
+							<?php if ( $tour_options instanceof Traversable ): ?>
+								<?php foreach($tour_options as $option): 									
+										$kind = (string) $option->option_name;
+										$number = ( array_key_exists($kind, $user_options) ) ? 
+												(int) $user_options[$kind]['number'] : 0;
+										$rate = get_price_before_tax((float) $option->from_price, $sales_tax);
+										
+								?>
+
+									<li class="sb-booking-li<?php echo ($number) ? '' : ' hidden'; ?>" data-kind="<?php echo $kind; ?>">
+										<?php
+											
+											printf("<span class='number'>%d</span> <span class='kind'>%s</span> at $<span class='rate'>%.2f</span> = $<span class='total'>%.2f</span>", 
+												$number,
+												ucfirst(($number == 1) ? singularize($kind) : $kind),
+												$rate,
+												$number * $rate
+											);
+										?>
+									</li>				
+								<?php endforeach; ?>
+							<?php endif; ?>
+	                    	</ul>
+	                    	<p id="sb-total-price"><?php printf("Subtotal: $<span id='subtotal'>%.2f</span>", $subtotal); ?></p>                        
+                        </td>
                     </tr>
                     
                     <tr class="checkout-tbody-tr checkout-tr">
@@ -255,11 +356,14 @@ $hidden_fields = $sim->getHiddenFieldString();
                             	<li class="sb-booking-li"></li>
                             </ul>
 							<ul class="sb-total-ul">
-                                <li class="sb-total-li"><?php echo $booking_fee_string; ?></li>
-                                <li class="sb-total-li"><?php echo $sales_tax_string; ?></li>
+								<li class="sb-total-li">
+									<span class="total-cost-label float-left">Fuel Surcharge ($4.00/guest): </span>
+									<span class="total-cost-label float-right"><?php printf("$%.2f", $total_guests * 4); ?></span>
+								</li>
+                                <li class="sb-total-li">$<?php printf("<span class='total-tax'>%.2f</span>", $total_tax); ?></li>
                                 <li class="sb-total-li black-border-top">
                                     <span class="total-cost-label float-left">Total after taxes and fees:</span>
-                                    <span id="total-cost-total">$<?php echo $amount; ?></span>
+                                    <span id="total-cost-total">$<span id="total"><?php echo $amount; ?></span></span>
                                 </li>
 							</ul>
                         </td>

@@ -2,17 +2,37 @@
 /*
 		Plugin Name: Choose Your Adventure
 		Description: Custom Pride of Maui Tour CMS Widget
-		Author: TagLine
+		Author: Tagline Media Group
 */
+
 global $wpdb;
-define("PLATFORM", "wordpress");
-define("MOBILE_TOUR_PAGE", "tourcms_mobile");
-define("TOUR_PAGE", "tourcms");
-define("TOUR_CHECKOUT", "tourcms_checkout");
-define('TOURCMS_URL', plugins_url().'/tourcms-adventure');
-define('TOURCMS_ROOT', WP_PLUGIN_DIR.'/tourcms-adventure');
-define('TOURCMS_HELPER', TOURCMS_ROOT.'/helpers/'.PLATFORM.'_tourcms_helper.php');
-define('TOURCMS_BOOKING_TABLE', $wpdb->prefix.'tourcms_bookings');
+
+if (!defined('PLATFORM')) 
+	define("PLATFORM", "wordpress");
+
+if (!defined('MOBILE_TOUR_PAGE')) 
+	define("MOBILE_TOUR_PAGE", "tourcms_mobile");
+
+if (!defined('TOUR_PAGE')) 
+	define("TOUR_PAGE", "tourcms");
+
+if (!defined('TOURCMS_CHECKOUT')) 
+	define("TOUR_CHECKOUT", "tourcms_checkout");
+
+if (!defined('TOURCMS_URL')) 
+	define('TOURCMS_URL', plugins_url().'/tourcms-adventure');
+
+if (!defined('TOURCMS_ROOT')) 
+	define('TOURCMS_ROOT', WP_PLUGIN_DIR.'/tourcms-adventure');
+	
+if (!defined('TOURCMS_HELPER')) 
+	define('TOURCMS_HELPER', TOURCMS_ROOT.'/helpers/'.PLATFORM.'_tourcms_helper.php');
+
+if (!defined('TOURCMS_BOOKING_TABLE')) 
+	define('TOURCMS_BOOKING_TABLE', $wpdb->prefix.'tourcms_bookings');
+
+if (!defined('PROTOCOL')) 
+	define('PROTOCOL', array_key_exists('HTTPS', $_SERVER) ? 'https' : 'http');
 
 require_once('tools/tourcms-toolbox.php');
 require_once("lib/tourcms/config.php");
@@ -20,10 +40,16 @@ require_once("admin/tourcms-admin-ui.php");
 
 //load widgets
 add_action('widgets_init', function() {
-	require_once(dirname(__FILE__)."/widgets/sidebar-widget/sidebar-widget.php");
-	require_once(dirname(__FILE__)."/widgets/booking-box-widget/booking-box-widget.php");
+	$widget_dir = dirname(__FILE__)."/widgets";
+
+	require_once("$widget_dir/sidebar-widget/sidebar-widget.php");
+	require_once("$widget_dir/booking-box-widget/booking-box-widget.php");
+	require_once("$widget_dir/homepage-widget/homepage-widget.php");
+
 	register_widget('TourcmsSidebarWidget');	
 	register_widget('TourcmsBookingBoxWidget');	
+	register_widget('TourcmsHomepageWidget');	
+
 });
 
 add_action('admin_enqueue_scripts', function() {
@@ -34,6 +60,10 @@ add_action('wp_enqueue_scripts', function() {
 	global $post;
 	$plugin_url = plugins_url().'/tourcms-adventure';
 
+	wp_deregister_script("jquery");
+	wp_register_script("jquery", "$plugin_url/js/jquery-2.1.1.min.js");
+	wp_enqueue_script("jquery");
+	
 	wp_register_script("sprintf", $plugin_url.'/js/sprintf.js', array(), false, false);
 	wp_enqueue_script("sprintf");
 
@@ -56,6 +86,11 @@ add_action('wp_enqueue_scripts', function() {
 	//wp_register_script('tourcms_booking_box', $plugin_url.'/js/booking-box.js', array('jquery', 'tourcms_calendar', 'tourcms_adventure_js'), false, false);
 	//wp_enqueue_script("tourcms_booking_box");	
 
+	if (is_front_page() || is_home()) {
+		wp_enqueue_style("homepage_css", "$plugin_url/css/homepage.css");
+		wp_enqueue_script("homepage_js", "$plugin_url/js/homepage.js", array("jquery"));
+	}
+	
 	if (get_post_type($post->ID) == TOUR_CHECKOUT) {
 		wp_register_script('checkout-js', $plugin_url.'/js/checkout.js', array('jquery', 'tourcms_adventure_js'));
 		wp_enqueue_script("checkout-js");
@@ -97,7 +132,7 @@ add_action('wp_enqueue_scripts', function() {
 
 	
 	wp_localize_script("tourcms_adventure_js", "ajax", array( 
-		'url' => admin_url( 'admin-ajax.php', 'https'), 
+		'url' => admin_url( 'admin-ajax.php', PROTOCOL), 
 		'action' => 'adventure_ajax_callback', 
 		'siteurl' => get_site_url(), 
 		'pluginurl' => plugins_url().'/tourcms-adventure/')
@@ -178,11 +213,12 @@ function adventure_ajax_callback() {
 	call_user_func($_POST['callback'], $_POST);
 }
 
-$date = $booking->start_date;
-$name = $booking->customers->customer[0]->customer_name;
-$tour = $booking->booking_name;
-$total_customers = $booking->customer_count;
-
+if (isset($booking)) {
+	$date = $booking->start_date;
+	$name = $booking->customers->customer[0]->customer_name;
+	$tour = $booking->booking_name;
+	$total_customers = $booking->customer_count;
+}
 
 
 ?>
