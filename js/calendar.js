@@ -182,7 +182,6 @@
 		
 		if (calendar.selected_month == month) {
 			$('#' + calendar.back_id).attr("disabled", "disabled");
-		
 		}
 		
 		var data = {
@@ -267,7 +266,7 @@
 				console.log("Current Tour", data, tour);
 				var id = live_calendar[calendar].table.id;
 				var date = current_tour.next_date.split("/");
-				//console.log(date[0], date[2], tour);
+				console.log(date[0], date[2], tour);
 	
 				calendars[id] = new Calendar(live_calendar[calendar], date[0], date[2], tour)
 				loadCalendar(calendars[id]);
