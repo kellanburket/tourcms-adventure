@@ -191,8 +191,7 @@ $total_tax = calculate_sales_tax($subtotal + (4 * $total_guests), $sales_tax);
                 <label class="checkout-label">Country</label>
                 <input type="text" name="x_country" id="country" class="checkout-field" value="<?php echo $prefill ? 'US' : ''; ?>"> 
             </div>
-			<?php if ( count($tour_options) > 0 ): ?>
-
+			<?php if ( $showAddOns && count($tour_options) > 0 ): ?>
 			<div id="checkout-div-4" class="checkout-div">
                 <div class="checkout-h3-wrap">
                     <h3>Add Ons</h3>
@@ -272,7 +271,6 @@ $total_tax = calculate_sales_tax($subtotal + (4 * $total_guests), $sales_tax);
             
        
         </div>
-		<!--        
         <div id="checkout-sidebar">
             <div id="checkout-sidebar-div-1" class="checkout-div checkout-sidebar-div">
                 <div id="checkout-sidebar-top">
@@ -283,7 +281,6 @@ $total_tax = calculate_sales_tax($subtotal + (4 * $total_guests), $sales_tax);
                 </div>
             </div>
         </div>
-        -->
     </div>
      <div id="checkout-wrap-2" class="checkout-div">
             <h3>Confirm Order and Pay</h3>
@@ -304,6 +301,7 @@ $total_tax = calculate_sales_tax($subtotal + (4 * $total_guests), $sales_tax);
                     <tr class="checkout-tbody-tr checkout-tr">
                         <td class="checkout-tbody-td checkout-td checkout-row-1" id="checkout-activity"><?php echo $tour_name; ?></td>
                         <td class="checkout-tbody-td checkout-td checkout-row-2" id="checkout-date"><?php echo $tour_date; ?></td>
+
                         <td class="checkout-tbody-td checkout-td checkout-row-3" id="checkout-subtotal">
 	                    	<ul class="sb-booking-ul">
 							<?php if ( is_array($user_rates) ): ?>
@@ -345,7 +343,7 @@ $total_tax = calculate_sales_tax($subtotal + (4 * $total_guests), $sales_tax);
 							<?php endif; ?>
 	                    	</ul>
 	                    	<p id="sb-total-price"><?php printf("Subtotal: $<span id='subtotal'>%.2f</span>", $subtotal); ?></p>                        
-                        </td>
+                        </td>                        
                     </tr>
                     
                     <tr class="checkout-tbody-tr checkout-tr">
