@@ -274,7 +274,7 @@ class TourcmsSidebarWidget extends WP_Widget {
                 </ul>
                 <div class="sb-tour-activity-date-wrap">
                     <p class="sb-tour-p" id="activity-date-lb">Activity Date</p>
-                    <input type="text" id="sb-tour-activity-date-field" name="activity_date" class="sb-confirm-field" placeholder="MM/DD/YYYY">
+                    <input type="text" id="sb-tour-activity-date-field" name="activity_date" class="sb-confirm-field" placeholder="MM/DD/YYYY" disabled>
                 </div>
             </div>
             

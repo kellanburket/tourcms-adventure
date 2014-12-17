@@ -181,11 +181,9 @@
 	$(document).ready(function() {
 		user_id = uniqid(4);
 
-		$('.sb-confirm-field').prop('disabled', true);
+		//$('.sb-confirm-field').prop('disabled', true);
 		tour_id = booking_box_tour_id = $("input[name=tour_id]").val();
-	
-		$('#datepicker-submit').attr('disabled', 'disabled');
-	
+		
 		$('.sb-tour-option').each(function() {
 			tour_options[$(this).find('[name=option_kind]').val()] = new Option($(this).find('[name=option_kind]').val(), parseFloat($(this).find('[name=option_rate]').val()));
 		});
@@ -236,7 +234,7 @@
 
 					tour_rates = updateSavings(tour_rates, $('.sb-tour-option'), $('#tourcms-totals'));
 					$('#promo-code-input').css({backgroundColor: "#00FF00"});
-					$('#promo-code-input').attr('disabled', '');
+					$('#promo-code-input').prop('disabled', false);
 					$('#promo-code-input').val(legal_codes[i].code);
 					
 				}
@@ -503,42 +501,26 @@
 		tour_id = id || 1;
 		//console.log('Fetch Rates Data', ajax.url, ajax.action);
 
-		return $.post(ajax.url, {tour_id: tour_id, action: ajax.action, callback: 'fetch_rates_data'}, function(data) {
+		return $.post(ajax.url, {
+			tour_id: tour_id, 
+			action: ajax.action, 
+			callback: 'fetch_rates_data'
+		}, function(data) {			
 			var rates = {};
-			//console.log("Rates Data", data);
+			console.log("Rates Data", data);
 			var childrenOK = false;
-			for (var i = 0; i < data.length; i++) {
-				if (data[i].kind == 'adults') {
-					rates[0] = new Rate(data[i].kind, data[i].rate);	
-					//booking_box_tour_rates[0] = new Rate(data[i].kind, data[i].rate);
-				} else if(data[i].kind == 'children') {
+
+			for (var i in data) {
+				if (i == 'adults') {
+					rates[0] = new Rate(i, data[i]);	
+				} else if(i == 'children') {
 					childrenOK = true;
-					rates[1] = new Rate(data[i].kind, data[i].rate);	
-					//booking_box_tour_rates[1] = new Rate(data[i].kind, data[i].rate);
+					rates[1] = new Rate(i, data[i]);	
 				} else {
-					rates[3] = new Rate(data[i].kind, data[i].rate);	
-				}
-
-			}
-
-			/*
-			$dp_children = $('#datepicker-children');
-			if (childrenOK) {
-				if (!$dp_children.is(':visible')) {
-					$dp_children.show();
-				}
-			} else {
-				if ($dp_children.is(':visible')) {
-					$dp_children.hide();
+					rates[3] = new Rate(i, data[i]);	
 				}			
 			}
 			
-			
-			//console.log("Tour Rates", tour_rates);
-			//console.log("Booking Box Tour Rates", booking_box_tour_rates);
-			
-			$('#datepicker-submit').removeAttr('disabled');
-			*/
 			init_cursor_events($('.sb-confirm-field'));
 			$('.sb-confirm-field').prop('disabled', false);
 			callback(rates);

@@ -282,7 +282,7 @@ function fetch_tour_data($id = null, $print = true, $hours = 1) {
 }
 
 function fetch_rates_data($id, $second_attempt = false, $print = true, $hours = 24) {
-	$id = (array_key_exists("id", $_POST)) ? intval($_POST['tour_id']) : $id;
+	$id = (array_key_exists("tour_id", $_POST)) ? intval($_POST['tour_id']) : $id;
 
 	$cache_file = dirname(__FILE__)."/cache/tour_rates_{$id}.json";	
 	

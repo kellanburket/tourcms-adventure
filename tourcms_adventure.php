@@ -112,7 +112,7 @@ add_action('wp_enqueue_scripts', function() {
 		);
 		
 		wp_localize_script("rate_calculation", "promotions", array(
-			array('name' => 'Internet Discount', 'type' => 'REDUCTION', 'value' => 10)
+			//array('name' => 'Internet Discount', 'type' => 'REDUCTION', 'value' => 10)
 		));
 	
 		wp_localize_script("rate_calculation", "legal_promotions", array(
